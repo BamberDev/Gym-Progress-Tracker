@@ -7,7 +7,7 @@ import ExerciseList from "@/components/ExerciseList";
 import AddExerciseDialog from "@/components/AddExerciseDialog";
 import { Button } from "@/components/ui/button";
 import { BicepsFlexed, Loader2Icon, Plus } from "lucide-react";
-import { redirectToSignIn } from "@/utils/redirect";
+import redirectToSignIn from "@/utils/redirect";
 
 export default function Dashboard() {
   const { user, isLoaded } = useUser();
