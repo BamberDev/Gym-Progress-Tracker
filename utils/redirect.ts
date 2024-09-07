@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export const redirectToSignIn = () => {
+export default function redirectToSignIn() {
   redirect("/sign-in");
-};
+}
