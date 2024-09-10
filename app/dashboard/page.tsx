@@ -7,14 +7,13 @@ import ExerciseList from "@/components/ExerciseList";
 import AddExerciseDialog from "@/components/AddExerciseDialog";
 import { Button } from "@/components/ui/button";
 import { BicepsFlexed, Loader2Icon, Plus } from "lucide-react";
-import { redirectToSignIn } from "@/utils/redirect";
+import redirectToSignIn from "@/utils/redirect";
 
 export default function Dashboard() {
   const { user, isLoaded } = useUser();
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddDialog, setShowAddDialog] = useState(false);
-  const [isAdding, setIsAdding] = useState(false);
 
   if (isLoaded && !user) {
     redirectToSignIn();
@@ -42,49 +41,27 @@ export default function Dashboard() {
     fetchExercises();
   }, [user, isLoaded]);
 
-  const addExercise = async (
-    exercise: Omit<Exercise, "_id" | "userId" | "userName">
-  ) => {
-    try {
-      setIsAdding(true);
-      const response = await fetch("/api/exercises", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(exercise),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to add exercise");
-      }
-      const newExercise = await response.json();
-      setExercises((prevExercises) => [...prevExercises, newExercise]);
-      setShowAddDialog(false);
-    } catch (error) {
-      console.error("Error adding exercise:", error);
-    } finally {
-      setIsAdding(false);
-    }
+  const handleAddExercise = (newExercise: NewExercise) => {
+    setExercises((prevExercises) => [
+      ...prevExercises,
+      {
+        ...newExercise,
+        userId: user?.id || "",
+        userName: `${user?.firstName} ${user?.lastName}`,
+      },
+    ]);
+    setShowAddDialog(false);
   };
 
-  const updateExercise = async (updatedExercise: Exercise) => {
-    try {
-      const response = await fetch(`/api/exercises/${updatedExercise._id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedExercise),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to update exercise");
-      }
-      const updated = await response.json();
-      setExercises((prevExercises) =>
-        prevExercises.map((ex) => (ex._id === updated._id ? updated : ex))
-      );
-    } catch (error) {
-      console.error("Error updating exercise:", error);
-    }
+  const handleUpdateExercise = (updatedExercise: Exercise) => {
+    setExercises((prevExercises) =>
+      prevExercises.map((ex) =>
+        ex._id === updatedExercise._id ? updatedExercise : ex
+      )
+    );
   };
 
-  const deleteExercise = async (id: string) => {
+  const handleDeleteExercise = async (id: string) => {
     try {
       const response = await fetch(`/api/exercises/${id}`, {
         method: "DELETE",
@@ -136,15 +113,14 @@ export default function Dashboard() {
             <AddExerciseDialog
               isOpen={showAddDialog}
               onClose={() => setShowAddDialog(false)}
-              onSubmit={addExercise}
-              isAdding={isAdding}
+              onSubmit={handleAddExercise}
             />
           </div>
           {exercises.length > 0 ? (
             <ExerciseList
               exercises={exercises}
-              onUpdate={updateExercise}
-              onDelete={deleteExercise}
+              onUpdate={handleUpdateExercise}
+              onDelete={handleDeleteExercise}
             />
           ) : (
             <div className="text-center text-white">
