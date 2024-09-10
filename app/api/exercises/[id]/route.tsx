@@ -18,15 +18,16 @@ export async function PUT(
     const exercise = await request.json();
     const { id } = params;
 
-    const { _id, ...updateData } = exercise;
-
     await client.connect();
     const database = client.db("gym-progress");
     const exercises = database.collection("exercises");
 
+    const updateFields = { ...exercise };
+    delete updateFields._id;
+
     const result = await exercises.findOneAndUpdate(
       { _id: new ObjectId(id), userId },
-      { $set: updateData },
+      { $set: updateFields },
       { returnDocument: "after" }
     );
 
