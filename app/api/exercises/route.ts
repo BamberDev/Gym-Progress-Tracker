@@ -40,6 +40,17 @@ export async function POST(request: Request) {
     exercise.userId = userId;
     exercise.userName = `${user?.firstName} ${user?.lastName}`;
 
+    if (
+      !exercise.name ||
+      !Array.isArray(exercise.sets) ||
+      exercise.sets.length === 0
+    ) {
+      return NextResponse.json(
+        { error: "Invalid exercise data" },
+        { status: 400 }
+      );
+    }
+
     await client.connect();
     const database = client.db("gym-progress");
     const exercises = database.collection("exercises");

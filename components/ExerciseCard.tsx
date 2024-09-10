@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import DeleteExerciseButton from "./DeleteExerciseButton";
 import EditExerciseButton from "./EditExerciseButton";
+import { Button } from "@/components/ui/button";
+import { Pencil } from "lucide-react";
 
 export default function ExerciseCard({
   exercise,
@@ -9,6 +12,8 @@ export default function ExerciseCard({
   onDelete,
   index,
 }: ExerciseCardProps) {
+  const [isEditing, setIsEditing] = useState(false);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
@@ -20,11 +25,20 @@ export default function ExerciseCard({
           <CardTitle>{exercise.name}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p>Reps: {exercise.reps}</p>
-          <p>Sets: {exercise.sets}</p>
-          <p>Weight: {exercise.weight} kg</p>
+          {exercise.restTime && <p>Rest Time - {exercise.restTime} min</p>}
+          {exercise.sets.map((set, index) => (
+            <p key={index}>
+              Set {index + 1} - {set.reps} reps x {set.weight} kg
+            </p>
+          ))}
           <div className="flex justify-end gap-2 mt-4">
-            <EditExerciseButton exercise={exercise} onUpdate={onUpdate} />
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setIsEditing(true)}
+            >
+              <Pencil className="h-5 w-5 text-black" />
+            </Button>
             <DeleteExerciseButton
               exerciseId={exercise._id!}
               onDelete={onDelete}
@@ -32,6 +46,12 @@ export default function ExerciseCard({
           </div>
         </CardContent>
       </Card>
+      <EditExerciseButton
+        exercise={exercise}
+        onUpdate={onUpdate}
+        isOpen={isEditing}
+        onClose={() => setIsEditing(false)}
+      />
     </motion.div>
   );
 }
