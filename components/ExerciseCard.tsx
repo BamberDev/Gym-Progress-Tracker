@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import DeleteExerciseButton from "./DeleteExerciseButton";
-import EditExerciseButton from "./EditExerciseButton";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
+import DeleteExerciseDialog from "./DeleteExerciseDialog";
+import EditExerciseDialog from "./EditExerciseDialog";
 
 export default function ExerciseCard({
   exercise,
@@ -39,14 +39,14 @@ export default function ExerciseCard({
             >
               <Pencil className="h-5 w-5 text-black" />
             </Button>
-            <DeleteExerciseButton
+            <DeleteExerciseDialog
               exerciseId={exercise._id!}
               onDelete={onDelete}
             />
           </div>
         </CardContent>
       </Card>
-      <EditExerciseButton
+      <EditExerciseDialog
         exercise={exercise}
         onUpdate={onUpdate}
         isOpen={isEditing}

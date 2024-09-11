@@ -7,7 +7,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2, Trash2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import ExerciseSetsManager from "./ExerciseSetsManager";
 
 export default function AddExerciseDialog({
   isOpen,
@@ -19,10 +20,6 @@ export default function AddExerciseDialog({
     restTime: "",
     sets: [],
   });
-  const [currentSet, setCurrentSet] = useState<ExerciseSet>({
-    reps: 0,
-    weight: 0,
-  });
   const [isAdding, setIsAdding] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,28 +27,6 @@ export default function AddExerciseDialog({
     setExercise((prev) => ({
       ...prev,
       [name]: name === "restTime" ? parseFloat(value) : value,
-    }));
-  };
-
-  const handleSetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setCurrentSet((prev) => ({ ...prev, [name]: parseInt(value) || 0 }));
-  };
-
-  const addSet = () => {
-    if (exercise.sets.length < 10 && currentSet.reps && currentSet.weight) {
-      setExercise((prev) => ({
-        ...prev,
-        sets: [...prev.sets, currentSet],
-      }));
-      setCurrentSet({ reps: 0, weight: 0 });
-    }
-  };
-
-  const removeSet = (index: number) => {
-    setExercise((prev) => ({
-      ...prev,
-      sets: prev.sets.filter((_, i) => i !== index),
     }));
   };
 
@@ -101,49 +76,12 @@ export default function AddExerciseDialog({
             value={exercise.restTime}
             onChange={handleChange}
           />
-          <div className="space-y-2">
-            {exercise.sets.map((set, index) => (
-              <div key={index} className="flex items-center justify-between">
-                <p className="text-white">
-                  Set {index + 1} - {set.reps} reps x {set.weight} kg
-                </p>
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="icon"
-                  onClick={() => removeSet(index)}
-                >
-                  <Trash2 className="h-5 w-5" />
-                </Button>
-              </div>
-            ))}
-          </div>
-          {exercise.sets.length < 10 && (
-            <div className="flex space-x-2">
-              <Input
-                name="reps"
-                type="number"
-                placeholder="Reps"
-                value={currentSet.reps || ""}
-                onChange={handleSetChange}
-              />
-              <Input
-                name="weight"
-                type="number"
-                placeholder="Weight (kg)"
-                value={currentSet.weight || ""}
-                onChange={handleSetChange}
-              />
-              <Button
-                type="button"
-                onClick={addSet}
-                disabled={!currentSet.reps || !currentSet.weight}
-                variant="secondary"
-              >
-                Add Set
-              </Button>
-            </div>
-          )}
+          <ExerciseSetsManager
+            sets={exercise.sets}
+            onSetsChange={(newSets) =>
+              setExercise((prev) => ({ ...prev, sets: newSets }))
+            }
+          />
           <Button
             type="submit"
             disabled={

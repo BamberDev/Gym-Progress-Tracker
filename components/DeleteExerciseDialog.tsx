@@ -9,7 +9,7 @@ import {
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
-export default function DeleteExerciseButton({
+export default function DeleteExerciseDialog({
   exerciseId,
   onDelete,
 }: DeleteExerciseButtonProps) {
