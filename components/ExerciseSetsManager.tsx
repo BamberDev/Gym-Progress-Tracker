@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Pencil, Check, Trash2, Plus } from "lucide-react";
+import { Pencil, Check } from "lucide-react";
+import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 
 export default function ExerciseSetsManager({
   sets,
@@ -98,14 +99,10 @@ export default function ExerciseSetsManager({
                   >
                     <Pencil className="h-5 w-5 text-black" />
                   </Button>
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="icon"
-                    onClick={() => removeSet(index)}
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </Button>
+                  <DeleteConfirmationDialog
+                    onDelete={() => removeSet(index)}
+                    entityName="set"
+                  />
                 </>
               )
             )}
@@ -134,7 +131,6 @@ export default function ExerciseSetsManager({
             disabled={!currentSet.reps || !currentSet.weight}
             variant="secondary"
           >
-            <Plus className="h-5 w-5" />
             Add Set
           </Button>
         </div>

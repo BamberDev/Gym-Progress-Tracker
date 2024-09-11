@@ -33,9 +33,9 @@ type AddExerciseDialogProps = {
   onSubmit: (exercise: NewExercise) => void;
 };
 
-type DeleteExerciseButtonProps = {
-  exerciseId: string;
-  onDelete: (id: string) => void;
+type DeleteConfirmationDialogProps = {
+  onDelete: () => void;
+  entityName: string;
 };
 
 type EditExerciseButtonProps = {
