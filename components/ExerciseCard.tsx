@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
-import DeleteExerciseDialog from "./DeleteExerciseDialog";
+import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import EditExerciseDialog from "./EditExerciseDialog";
 
 export default function ExerciseCard({
@@ -39,9 +39,9 @@ export default function ExerciseCard({
             >
               <Pencil className="h-5 w-5 text-black" />
             </Button>
-            <DeleteExerciseDialog
-              exerciseId={exercise._id!}
-              onDelete={onDelete}
+            <DeleteConfirmationDialog
+              onDelete={() => onDelete(exercise._id!)}
+              entityName="exercise"
             />
           </div>
         </CardContent>
