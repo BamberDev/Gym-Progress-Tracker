@@ -44,3 +44,9 @@ type EditExerciseButtonProps = {
   isOpen: boolean;
   onClose: () => void;
 };
+
+type ExerciseSetsManagerProps = {
+  sets: ExerciseSet[];
+  onSetsChange: (updatedSets: ExerciseSet[]) => void;
+  isEditable?: boolean;
+};
