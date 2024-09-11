@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -7,21 +8,20 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Trash2 } from "lucide-react";
-import { useState } from "react";
 
-export default function DeleteExerciseDialog({
-  exerciseId,
+export default function DeleteConfirmationDialog({
   onDelete,
-}: DeleteExerciseButtonProps) {
-  const [isDeleting, setIsDeleting] = useState(false);
+  entityName,
+}: DeleteConfirmationDialogProps) {
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleDelete = () => {
-    onDelete(exerciseId);
-    setIsDeleting(false);
+    onDelete();
+    setIsOpen(false);
   };
 
   return (
-    <Dialog open={isDeleting} onOpenChange={setIsDeleting}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="destructive" size="icon">
           <Trash2 className="h-5 w-5" />
@@ -33,11 +33,11 @@ export default function DeleteExerciseDialog({
         </DialogHeader>
         <div className="space-y-4">
           <p>
-            This action cannot be undone. This will permanently delete the
-            exercise.
+            This action cannot be undone. This will permanently delete the{" "}
+            {entityName}.
           </p>
           <div className="flex justify-end gap-2">
-            <Button variant="secondary" onClick={() => setIsDeleting(false)}>
+            <Button variant="secondary" onClick={() => setIsOpen(false)}>
               Cancel
             </Button>
             <Button variant="destructive" onClick={handleDelete}>
