@@ -86,19 +86,17 @@ export function GymTimer() {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Timer</DialogTitle>
+          <DialogTitle>Rest Timer</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
+        <div className="flex flex-col gap-4 py-4">
+          <div>
             <Input
               id="duration"
               type="number"
               value={duration}
               onChange={handleDurationChange}
-              placeholder="Enter seconds"
-              className="col-span-3"
+              placeholder="Enter seconds (1-600)"
             />
-            <span className="text-sm text-muted-foreground">seconds</span>
           </div>
           <div className="flex justify-center items-center text-4xl font-bold">
             {formatTime(time)}
