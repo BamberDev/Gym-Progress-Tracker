@@ -8,6 +8,7 @@ import AddExerciseDialog from "@/components/AddExerciseDialog";
 import { Button } from "@/components/ui/button";
 import { BicepsFlexed, Loader2Icon, Plus } from "lucide-react";
 import redirectToSignIn from "@/utils/redirect";
+import { GymTimer } from "@/components/GymTimer";
 
 export default function Dashboard() {
   const { user, isLoaded } = useUser();
@@ -129,6 +130,7 @@ export default function Dashboard() {
           )}
         </motion.div>
       )}
+      <GymTimer />
     </div>
   );
 }
