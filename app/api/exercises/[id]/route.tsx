@@ -25,20 +25,24 @@ export async function PUT(
     const updateFields = { ...exercise };
     delete updateFields._id;
 
-    const result = await exercises.findOneAndUpdate(
+    const result = await exercises.updateOne(
       { _id: new ObjectId(id), userId },
-      { $set: updateFields },
-      { returnDocument: "after" }
+      { $set: updateFields }
     );
 
-    if (!result || !result.value) {
+    if (result.matchedCount === 0) {
       return NextResponse.json(
         { error: "Exercise not found" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(result.value);
+    const updatedExercise = await exercises.findOne({
+      _id: new ObjectId(id),
+      userId,
+    });
+
+    return NextResponse.json(updatedExercise);
   } catch (error) {
     console.error("Error updating exercise:", error);
     return NextResponse.json(
