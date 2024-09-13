@@ -13,6 +13,24 @@ export default function ExerciseCard({
   index,
 }: ExerciseCardProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`/api/exercises/${exercise._id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete exercise");
+      }
+      onDelete(exercise._id!);
+    } catch (error) {
+      console.error("Error deleting exercise:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <motion.div
@@ -40,8 +58,9 @@ export default function ExerciseCard({
               <Pencil className="h-5 w-5 text-black" />
             </Button>
             <DeleteConfirmationDialog
-              onDelete={() => onDelete(exercise._id!)}
+              onDelete={handleDelete}
               entityName="exercise"
+              isDeleting={isDeleting}
             />
           </div>
         </CardContent>
