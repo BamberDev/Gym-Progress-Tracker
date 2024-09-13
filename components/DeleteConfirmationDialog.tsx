@@ -7,11 +7,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Trash2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 
 export default function DeleteConfirmationDialog({
   onDelete,
   entityName,
+  isDeleting,
 }: DeleteConfirmationDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -40,8 +41,19 @@ export default function DeleteConfirmationDialog({
             <Button variant="secondary" onClick={() => setIsOpen(false)}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDelete}>
-              Delete
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
             </Button>
           </div>
         </div>
