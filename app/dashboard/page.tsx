@@ -62,20 +62,10 @@ export default function Dashboard() {
     );
   };
 
-  const handleDeleteExercise = async (id: string) => {
-    try {
-      const response = await fetch(`/api/exercises/${id}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to delete exercise");
-      }
-      setExercises((prevExercises) =>
-        prevExercises.filter((ex) => ex._id !== id)
-      );
-    } catch (error) {
-      console.error("Error deleting exercise:", error);
-    }
+  const handleDeleteExercise = (id: string) => {
+    setExercises((prevExercises) =>
+      prevExercises.filter((ex) => ex._id !== id)
+    );
   };
 
   if (!isLoaded) {
