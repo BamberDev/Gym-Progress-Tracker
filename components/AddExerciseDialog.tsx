@@ -15,11 +15,12 @@ export default function AddExerciseDialog({
   onClose,
   onSubmit,
 }: AddExerciseDialogProps) {
-  const [exercise, setExercise] = useState<NewExercise>({
+  const initialExerciseState: NewExercise = {
     name: "",
     restTime: "",
     sets: [],
-  });
+  };
+  const [exercise, setExercise] = useState<NewExercise>(initialExerciseState);
   const [isAdding, setIsAdding] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,6 +44,7 @@ export default function AddExerciseDialog({
       }
       const newExercise = await response.json();
       onSubmit(newExercise);
+      setExercise(initialExerciseState);
     } catch (error) {
       console.error("Error adding exercise:", error);
     } finally {
@@ -93,7 +95,7 @@ export default function AddExerciseDialog({
           >
             {isAdding ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 Adding...
               </>
             ) : (
