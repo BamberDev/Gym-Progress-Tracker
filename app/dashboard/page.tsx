@@ -3,16 +3,17 @@
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
-import ExerciseList from "@/components/ExerciseList";
-import AddExerciseDialog from "@/components/AddExerciseDialog";
 import { Button } from "@/components/ui/button";
-import { BicepsFlexed, Loader2Icon, Plus } from "lucide-react";
+import { BicepsFlexed, Plus } from "lucide-react";
 import redirectToSignIn from "@/utils/redirect";
 import { GymTimer } from "@/components/GymTimer";
+import AddGroupDialog from "@/components/AddGroupDialog";
+import GroupList from "@/components/GroupList";
+import Loader from "@/components/Loader";
 
 export default function Dashboard() {
   const { user, isLoaded } = useUser();
-  const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [groups, setGroups] = useState<Group[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddDialog, setShowAddDialog] = useState(false);
 
@@ -21,51 +22,44 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    const fetchExercises = async () => {
+    const fetchGroups = async () => {
       if (!isLoaded || !user) return;
-
       try {
         setIsLoading(true);
-        const response = await fetch("/api/exercises");
+        const response = await fetch("/api/groups");
         if (!response.ok) {
-          throw new Error("Failed to fetch exercises");
+          throw new Error("Failed to fetch groups");
         }
         const data = await response.json();
-        setExercises(data);
+        setGroups(data);
       } catch (error) {
-        console.error("Error fetching exercises:", error);
+        console.error("Error fetching groups:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchExercises();
+    fetchGroups();
   }, [user, isLoaded]);
 
-  const handleAddExercise = (newExercise: NewExercise) => {
-    setExercises((prevExercises) => [
-      ...prevExercises,
-      {
-        ...newExercise,
-        userId: user?.id || "",
-        userName: `${user?.firstName} ${user?.lastName}`,
-      },
+  const handleAddGroup = (newGroup: NewGroup) => {
+    setGroups((prevGroups) => [
+      ...prevGroups,
+      { ...newGroup, userId: user?.id || "" },
     ]);
     setShowAddDialog(false);
   };
 
-  const handleUpdateExercise = (updatedExercise: Exercise) => {
-    setExercises((prevExercises) =>
-      prevExercises.map((ex) =>
-        ex._id === updatedExercise._id ? updatedExercise : ex
+  const handleUpdateGroup = (updatedGroup: Group) => {
+    setGroups((prevGroups) =>
+      prevGroups.map((group) =>
+        group._id === updatedGroup._id ? updatedGroup : group
       )
     );
   };
 
-  const handleDeleteExercise = (id: string) => {
-    setExercises((prevExercises) =>
-      prevExercises.filter((ex) => ex._id !== id)
-    );
+  const handleDeleteGroup = (id: string) => {
+    setGroups((prevGroups) => prevGroups.filter((group) => group._id !== id));
   };
 
   if (!isLoaded) {
@@ -86,10 +80,7 @@ export default function Dashboard() {
         Welcome, {user?.firstName}!
       </motion.h1>
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center text-white">
-          <Loader2Icon className="h-8 w-8 animate-spin" />
-          <p>Loading...</p>
-        </div>
+        <Loader />
       ) : (
         <motion.div
           initial={{ opacity: 0 }}
@@ -98,24 +89,23 @@ export default function Dashboard() {
         >
           <div className="flex justify-center m-4">
             <Button onClick={() => setShowAddDialog(true)} variant="secondary">
-              <Plus />
-              Add Exercise
+              <Plus /> Add Group
             </Button>
-            <AddExerciseDialog
+            <AddGroupDialog
               isOpen={showAddDialog}
               onClose={() => setShowAddDialog(false)}
-              onSubmit={handleAddExercise}
+              onSubmit={handleAddGroup}
             />
           </div>
-          {exercises.length > 0 ? (
-            <ExerciseList
-              exercises={exercises}
-              onUpdate={handleUpdateExercise}
-              onDelete={handleDeleteExercise}
+          {groups.length > 0 ? (
+            <GroupList
+              groups={groups}
+              onUpdate={handleUpdateGroup}
+              onDelete={handleDeleteGroup}
             />
           ) : (
             <div className="text-center text-white">
-              <p>No exercises found. Add your first exercise!</p>
+              <p>No groups found. Add your first group!</p>
             </div>
           )}
         </motion.div>
