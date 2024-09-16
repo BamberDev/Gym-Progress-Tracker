@@ -1,26 +1,22 @@
 import { NextResponse } from "next/server";
 import { MongoClient } from "mongodb";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 
 const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri as string);
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const { userId } = auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { searchParams } = new URL(request.url);
-    const groupId = searchParams.get("groupId");
-
     await client.connect();
     const database = client.db("gym-progress");
-    const exercises = database.collection("exercises");
+    const groups = database.collection("groups");
 
-    const query = groupId ? { userId, groupId } : { userId };
-    const result = await exercises.find(query).toArray();
+    const result = await groups.find({ userId }).toArray();
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(
@@ -39,31 +35,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const user = await currentUser();
-    const exercise = await request.json();
-    exercise.userId = userId;
-    exercise.userName = `${user?.firstName} ${user?.lastName}`;
+    const group = await request.json();
+    group.userId = userId;
 
-    if (
-      !exercise.name ||
-      !exercise.groupId ||
-      !Array.isArray(exercise.sets) ||
-      exercise.sets.length === 0
-    ) {
+    if (!group.name || !group.description) {
       return NextResponse.json(
-        { error: "Invalid exercise data", receivedData: exercise },
+        { error: "Invalid group data" },
         { status: 400 }
       );
     }
 
     await client.connect();
     const database = client.db("gym-progress");
-    const exercises = database.collection("exercises");
+    const groups = database.collection("groups");
 
-    const result = await exercises.insertOne(exercise);
-    return NextResponse.json({ ...exercise, _id: result.insertedId });
+    const result = await groups.insertOne(group);
+    return NextResponse.json({ ...group, _id: result.insertedId });
   } catch (error) {
-    console.error("Error creating exercise:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

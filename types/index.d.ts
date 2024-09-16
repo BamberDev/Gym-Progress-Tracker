@@ -5,6 +5,7 @@ type ExerciseSet = {
 
 type Exercise = {
   _id?: string;
+  groupId: string;
   userId: string;
   userName: string;
   name: string;
@@ -12,7 +13,21 @@ type Exercise = {
   sets: ExerciseSet[];
 };
 
-type NewExercise = Omit<Exercise, "_id" | "userId" | "userName">;
+type NewExercise = {
+  name: string;
+  restTime: string;
+  sets: ExerciseSet[];
+  groupId: string;
+};
+
+type Group = {
+  _id?: string;
+  userId: string;
+  name: string;
+  description: string;
+};
+
+type NewGroup = Omit<Group, "_id" | "userId">;
 
 type ExerciseListProps = {
   exercises: Exercise[];
@@ -31,11 +46,13 @@ type AddExerciseDialogProps = {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (exercise: NewExercise) => void;
+  groupId: string;
 };
 
 type DeleteConfirmationDialogProps = {
   onDelete: () => void;
   entityName: string;
+  isDeleting: boolean;
 };
 
 type EditExerciseButtonProps = {
@@ -49,4 +66,29 @@ type ExerciseSetsManagerProps = {
   sets: ExerciseSet[];
   onSetsChange: (updatedSets: ExerciseSet[]) => void;
   isEditable?: boolean;
+};
+
+type GroupListProps = {
+  groups: Group[];
+  onUpdate: (group: Group) => void;
+  onDelete: (id: string) => void;
+};
+
+type GroupCardProps = {
+  group: Group;
+  onUpdate: (group: Group) => void;
+  onDelete: (id: string) => void;
+};
+
+type AddGroupDialogProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (group: NewGroup) => void;
+};
+
+type EditGroupDialogProps = {
+  group: Group;
+  onUpdate: (group: Group) => void;
+  isOpen: boolean;
+  onClose: () => void;
 };

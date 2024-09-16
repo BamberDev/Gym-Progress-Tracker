@@ -8,50 +8,46 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import ExerciseSetsManager from "./ExerciseSetsManager";
+import { Textarea } from "@/components/ui/textarea";
 
-export default function AddExerciseDialog({
+export default function AddGroupDialog({
   isOpen,
   onClose,
   onSubmit,
-  groupId,
-}: AddExerciseDialogProps) {
-  const initialExerciseState: NewExercise = {
+}: AddGroupDialogProps) {
+  const initialGroupState: NewGroup = {
     name: "",
-    restTime: "",
-    sets: [],
-    groupId: groupId,
+    description: "",
   };
 
-  const [exercise, setExercise] = useState<NewExercise>(initialExerciseState);
+  const [group, setGroup] = useState<NewGroup>(initialGroupState);
   const [isAdding, setIsAdding] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setExercise((prev) => ({
-      ...prev,
-      [name]: name === "restTime" ? parseFloat(value) : value,
-    }));
+    setGroup((prev) => ({ ...prev, [name]: value }));
   };
 
-  const addExercise = async (exercise: NewExercise) => {
+  const addGroup = async (group: NewGroup) => {
     try {
       setIsAdding(true);
-      const response = await fetch("/api/exercises", {
+      const response = await fetch("/api/groups", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(exercise),
+        body: JSON.stringify(group),
       });
       if (!response.ok) {
-        throw new Error("Failed to add exercise");
+        throw new Error("Failed to add group");
       }
-      const newExercise = await response.json();
-      onSubmit(newExercise);
-      setExercise(initialExerciseState);
+      const newGroup = await response.json();
+      onSubmit(newGroup);
+      setGroup(initialGroupState);
     } catch (error) {
-      console.error("Error adding exercise:", error);
+      console.error("Error adding group:", error);
     } finally {
       setIsAdding(false);
     }
@@ -59,41 +55,33 @@ export default function AddExerciseDialog({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addExercise(exercise);
+    addGroup(group);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="bg-[#1f1f23] border-[#26252a] text-white">
         <DialogHeader>
-          <DialogTitle>Add New Exercise</DialogTitle>
+          <DialogTitle>Add New Group</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 text-black">
           <Input
             name="name"
-            placeholder="Exercise name"
-            value={exercise.name}
+            placeholder="Group name"
+            value={group.name}
             onChange={handleChange}
             required
           />
-          <Input
-            name="restTime"
-            type="number"
-            placeholder="Rest time (min)"
-            value={exercise.restTime}
+          <Textarea
+            name="description"
+            placeholder="Group description"
+            value={group.description}
             onChange={handleChange}
-          />
-          <ExerciseSetsManager
-            sets={exercise.sets}
-            onSetsChange={(newSets) =>
-              setExercise((prev) => ({ ...prev, sets: newSets }))
-            }
+            required
           />
           <Button
             type="submit"
-            disabled={
-              isAdding || exercise.sets.length === 0 || exercise.name === ""
-            }
+            disabled={isAdding || group.name === "" || group.description === ""}
             variant="secondary"
             size="lg"
             className="w-full"
@@ -104,7 +92,7 @@ export default function AddExerciseDialog({
                 Adding...
               </>
             ) : (
-              "Add Exercise"
+              "Add Group"
             )}
           </Button>
         </form>
