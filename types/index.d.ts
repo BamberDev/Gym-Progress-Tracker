@@ -92,3 +92,9 @@ type EditGroupDialogProps = {
   isOpen: boolean;
   onClose: () => void;
 };
+
+type SearchBarProps = {
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+  placeholder: string;
+};
