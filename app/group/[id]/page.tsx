@@ -9,6 +9,7 @@ import { BicepsFlexed, MoveLeft, Plus } from "lucide-react";
 import redirectToSignIn from "@/utils/redirect";
 import Link from "next/link";
 import Loader from "@/components/Loader";
+import SearchBar from "@/components/SearchBar";
 
 export default function GroupPage({ params }: { params: { id: string } }) {
   const { user, isLoaded } = useUser();
@@ -16,6 +17,7 @@ export default function GroupPage({ params }: { params: { id: string } }) {
   const [group, setGroup] = useState<Group | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   if (isLoaded && !user) {
     redirectToSignIn();
@@ -73,6 +75,10 @@ export default function GroupPage({ params }: { params: { id: string } }) {
     );
   };
 
+  const filteredExercises = exercises.filter((exercise) =>
+    exercise.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   if (!isLoaded) {
     return (
       <div className="flex flex-col items-center justify-center min-h-svh text-white">
@@ -85,19 +91,19 @@ export default function GroupPage({ params }: { params: { id: string } }) {
     <div className="container mx-auto p-4">
       <Link href="/dashboard">
         <Button variant="secondary">
-          <MoveLeft className=" h-5 w-5" />
+          <MoveLeft className="h-5 w-5" />
         </Button>
       </Link>
       {isLoading ? (
         <Loader />
       ) : (
         <div>
-          <h1 className="text-3xl font-bold text-center text-white">
+          <h1 className="text-3xl font-bold text-center text-white mb-4">
             {group?.name}
           </h1>
-          <div className="flex justify-center m-4">
+          <div className="flex flex-col items-center m-4 space-y-4">
             <Button onClick={() => setShowAddDialog(true)} variant="secondary">
-              <Plus /> Add Exercise
+              <Plus className="mr-2 h-5 w-5" /> Add Exercise
             </Button>
             <AddExerciseDialog
               isOpen={showAddDialog}
@@ -105,16 +111,25 @@ export default function GroupPage({ params }: { params: { id: string } }) {
               onSubmit={handleAddExercise}
               groupId={params.id}
             />
+            <SearchBar
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              placeholder="Find exercise..."
+            />
           </div>
-          {exercises.length > 0 ? (
+          {filteredExercises.length > 0 ? (
             <ExerciseList
-              exercises={exercises}
+              exercises={filteredExercises}
               onUpdate={handleUpdateExercise}
               onDelete={handleDeleteExercise}
             />
           ) : (
             <div className="text-center text-white">
-              <p>No exercises found. Add your first exercise!</p>
+              <p>
+                {searchTerm
+                  ? "No exercises found matching your search."
+                  : "No exercises found. Add your first exercise!"}
+              </p>
             </div>
           )}
         </div>

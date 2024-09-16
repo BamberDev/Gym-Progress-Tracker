@@ -10,12 +10,14 @@ import { GymTimer } from "@/components/GymTimer";
 import AddGroupDialog from "@/components/AddGroupDialog";
 import GroupList from "@/components/GroupList";
 import Loader from "@/components/Loader";
+import SearchBar from "@/components/SearchBar";
 
 export default function Dashboard() {
   const { user, isLoaded } = useUser();
   const [groups, setGroups] = useState<Group[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   if (isLoaded && !user) {
     redirectToSignIn();
@@ -62,6 +64,12 @@ export default function Dashboard() {
     setGroups((prevGroups) => prevGroups.filter((group) => group._id !== id));
   };
 
+  const filteredGroups = groups.filter(
+    (group) =>
+      group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      group.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   if (!isLoaded) {
     return (
       <div className="flex flex-col items-center justify-center min-h-svh text-white">
@@ -87,25 +95,34 @@ export default function Dashboard() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <div className="flex justify-center m-4">
+          <div className="flex flex-col items-center m-4 space-y-4">
             <Button onClick={() => setShowAddDialog(true)} variant="secondary">
-              <Plus /> Add Group
+              <Plus className="mr-2 h-5 w-5" /> Add Group
             </Button>
             <AddGroupDialog
               isOpen={showAddDialog}
               onClose={() => setShowAddDialog(false)}
               onSubmit={handleAddGroup}
             />
+            <SearchBar
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              placeholder="Find group..."
+            />
           </div>
-          {groups.length > 0 ? (
+          {filteredGroups.length > 0 ? (
             <GroupList
-              groups={groups}
+              groups={filteredGroups}
               onUpdate={handleUpdateGroup}
               onDelete={handleDeleteGroup}
             />
           ) : (
             <div className="text-center text-white">
-              <p>No groups found. Add your first group!</p>
+              <p>
+                {searchTerm
+                  ? "No groups found matching your search."
+                  : "No groups found. Add your first group!"}
+              </p>
             </div>
           )}
         </motion.div>
