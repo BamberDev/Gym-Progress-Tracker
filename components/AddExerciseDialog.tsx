@@ -14,12 +14,15 @@ export default function AddExerciseDialog({
   isOpen,
   onClose,
   onSubmit,
+  groupId,
 }: AddExerciseDialogProps) {
   const initialExerciseState: NewExercise = {
     name: "",
     restTime: "",
     sets: [],
+    groupId: groupId,
   };
+
   const [exercise, setExercise] = useState<NewExercise>(initialExerciseState);
   const [isAdding, setIsAdding] = useState(false);
 
@@ -36,7 +39,9 @@ export default function AddExerciseDialog({
       setIsAdding(true);
       const response = await fetch("/api/exercises", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(exercise),
       });
       if (!response.ok) {
