@@ -6,11 +6,11 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { BicepsFlexed, Plus } from "lucide-react";
 import redirectToSignIn from "@/utils/redirect";
-import { GymTimer } from "@/components/GymTimer";
 import AddGroupDialog from "@/components/AddGroupDialog";
 import GroupList from "@/components/GroupList";
 import Loader from "@/components/Loader";
 import SearchBar from "@/components/SearchBar";
+import GoBackButton from "@/components/GoBackButton";
 
 export default function Dashboard() {
   const { user, isLoaded } = useUser();
@@ -80,6 +80,7 @@ export default function Dashboard() {
 
   return (
     <div className="container mx-auto p-4">
+      <GoBackButton />
       <motion.h1
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -127,7 +128,6 @@ export default function Dashboard() {
           )}
         </motion.div>
       )}
-      <GymTimer />
     </div>
   );
 }
