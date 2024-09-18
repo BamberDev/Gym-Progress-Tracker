@@ -5,11 +5,12 @@ import { useUser } from "@clerk/nextjs";
 import ExerciseList from "@/components/ExerciseList";
 import AddExerciseDialog from "@/components/AddExerciseDialog";
 import { Button } from "@/components/ui/button";
-import { BicepsFlexed, MoveLeft, Plus } from "lucide-react";
+import { BicepsFlexed, Plus } from "lucide-react";
 import redirectToSignIn from "@/utils/redirect";
-import Link from "next/link";
 import Loader from "@/components/Loader";
 import SearchBar from "@/components/SearchBar";
+import { motion } from "framer-motion";
+import GoBackButton from "@/components/GoBackButton";
 
 export default function GroupPage({ params }: { params: { id: string } }) {
   const { user, isLoaded } = useUser();
@@ -89,18 +90,18 @@ export default function GroupPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="container mx-auto p-4">
-      <Link href="/dashboard">
-        <Button variant="secondary">
-          <MoveLeft className="h-5 w-5" />
-        </Button>
-      </Link>
+      <GoBackButton />
       {isLoading ? (
         <Loader />
       ) : (
         <div>
-          <h1 className="text-3xl font-bold text-center text-white mb-4">
+          <motion.h1
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-3xl font-bold text-center text-white mb-4"
+          >
             {group?.name}
-          </h1>
+          </motion.h1>
           <div className="flex flex-col items-center m-4 space-y-4">
             <Button onClick={() => setShowAddDialog(true)} variant="secondary">
               <Plus className="mr-2 h-5 w-5" /> Add Exercise
