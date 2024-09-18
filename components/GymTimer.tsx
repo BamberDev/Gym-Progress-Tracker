@@ -79,7 +79,7 @@ export function GymTimer() {
         <Button
           variant="secondary"
           size="icon"
-          className="fixed bottom-3 left-3 rounded-full"
+          className="fixed bottom-3 left-3 rounded-full border border-[#26252a]"
         >
           <Timer className="h-5 w-5" />
         </Button>
