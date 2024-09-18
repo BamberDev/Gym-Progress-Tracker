@@ -14,6 +14,15 @@ export default function ExerciseCard({
 }: ExerciseCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [checkedSets, setCheckedSets] = useState<boolean[]>(
+    new Array(exercise.sets.length).fill(false)
+  );
+
+  const handleCheckboxChange = (setIndex: number) => {
+    const updatedCheckedSets = [...checkedSets];
+    updatedCheckedSets[setIndex] = !updatedCheckedSets[setIndex];
+    setCheckedSets(updatedCheckedSets);
+  };
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -43,10 +52,24 @@ export default function ExerciseCard({
           <CardTitle>{exercise.name}</CardTitle>
         </CardHeader>
         <CardContent>
-          {exercise.restTime && <p>Rest Time - {exercise.restTime} min</p>}
-          {exercise.sets.map((set, index) => (
-            <p key={index}>
-              Set {index + 1} - {set.reps} reps x {set.weight} kg
+          {exercise.restTime && (
+            <p>Rest between sets - {exercise.restTime} min</p>
+          )}
+          {exercise.sets.map((set, setIndex) => (
+            <p
+              key={setIndex}
+              className={`flex items-center gap-1 ${
+                checkedSets[setIndex] && "line-through text-gray-400"
+              }`}
+            >
+              <input
+                type="checkbox"
+                className="w-5 h-5"
+                checked={checkedSets[setIndex]}
+                onChange={() => handleCheckboxChange(setIndex)}
+                aria-label={`Mark Set ${setIndex + 1} as completed`}
+              />
+              Set {setIndex + 1} - {set.reps} reps x {set.weight} kg
             </p>
           ))}
           <div className="flex justify-end gap-2 mt-4">
