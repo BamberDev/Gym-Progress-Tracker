@@ -98,13 +98,13 @@ export default function GroupPage({ params }: { params: { id: string } }) {
           <motion.h1
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-3xl font-bold text-center text-white mb-4"
+            className="mb-6 mt-1 text-3xl font-bold text-center text-white"
           >
             {group?.name}
           </motion.h1>
           <div className="flex flex-col items-center m-4 space-y-4">
             <Button onClick={() => setShowAddDialog(true)} variant="secondary">
-              <Plus className="mr-2 h-5 w-5" /> Add Exercise
+              <Plus className="mr-1 h-5 w-5" /> Add Exercise
             </Button>
             <AddExerciseDialog
               isOpen={showAddDialog}
