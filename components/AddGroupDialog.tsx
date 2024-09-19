@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function AddGroupDialog({
@@ -60,7 +60,7 @@ export default function AddGroupDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-[#1f1f23] border-[#26252a] text-white">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Add New Group</DialogTitle>
         </DialogHeader>
@@ -83,7 +83,6 @@ export default function AddGroupDialog({
             type="submit"
             disabled={isAdding || group.name === "" || group.description === ""}
             variant="secondary"
-            size="lg"
             className="w-full"
           >
             {isAdding ? (
@@ -92,7 +91,10 @@ export default function AddGroupDialog({
                 Adding...
               </>
             ) : (
-              "Add Group"
+              <>
+                <Plus className="mr-1 h-5 w-5" />
+                Add Group
+              </>
             )}
           </Button>
         </form>
