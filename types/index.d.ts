@@ -52,7 +52,7 @@ type AddExerciseDialogProps = {
 type DeleteConfirmationDialogProps = {
   onDelete: () => void;
   entityName: string;
-  isDeleting: boolean;
+  isDeleting?: boolean;
 };
 
 type EditExerciseButtonProps = {
