@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import ExerciseSetsManager from "./ExerciseSetsManager";
 
 export default function AddExerciseDialog({
@@ -64,7 +64,7 @@ export default function AddExerciseDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-[#1f1f23] border-[#26252a] text-white">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Add New Exercise</DialogTitle>
         </DialogHeader>
@@ -79,7 +79,7 @@ export default function AddExerciseDialog({
           <Input
             name="restTime"
             type="number"
-            placeholder="Rest time (min)"
+            placeholder="Rest between sets (min)"
             value={exercise.restTime}
             onChange={handleChange}
           />
@@ -95,16 +95,18 @@ export default function AddExerciseDialog({
               isAdding || exercise.sets.length === 0 || exercise.name === ""
             }
             variant="secondary"
-            size="lg"
             className="w-full"
           >
             {isAdding ? (
               <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                <Loader2 className="mr-1 h-5 w-5 animate-spin" />
                 Adding...
               </>
             ) : (
-              "Add Exercise"
+              <>
+                <Plus className="mr-1 h-5 w-5" />
+                Add Exercise
+              </>
             )}
           </Button>
         </form>
