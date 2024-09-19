@@ -19,7 +19,9 @@ export default function RootLayout({
           <div className="absolute top-4 right-4 z-10">
             <SignedIn>
               <UserButton
-                appearance={{ elements: { avatarBox: "h-10 w-10" } }}
+                appearance={{
+                  elements: { avatarBox: "h-10 w-10 border-2 border-white" },
+                }}
               />
             </SignedIn>
           </div>
