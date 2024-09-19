@@ -47,34 +47,37 @@ export default function ExerciseCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
     >
-      <Card className="bg-[#1f1f23] border-[#26252a] text-white">
+      <Card>
         <CardHeader>
           <CardTitle>{exercise.name}</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="sm:text-[18px]">
           {exercise.restTime && (
-            <p>Rest between sets - {exercise.restTime} min</p>
+            <p className="mb-2">Rest between sets - {exercise.restTime} min</p>
           )}
-          {exercise.sets.map((set, setIndex) => (
-            <p
-              key={setIndex}
-              className={`flex items-center gap-1 ${
-                checkedSets[setIndex] && "line-through text-gray-400"
-              }`}
-            >
-              <input
-                type="checkbox"
-                className="w-5 h-5"
-                checked={checkedSets[setIndex]}
-                onChange={() => handleCheckboxChange(setIndex)}
-                aria-label={`Mark Set ${setIndex + 1} as completed`}
-              />
-              Set {setIndex + 1} - {set.reps} reps x {set.weight} kg
-            </p>
-          ))}
+          <div className="h-24 sm:h-28 overflow-y-auto break-words">
+            {exercise.sets.map((set, setIndex) => (
+              <p
+                key={setIndex}
+                className={`flex items-center gap-1 ${
+                  checkedSets[setIndex] && "line-through text-gray-400"
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  className="w-5 h-5"
+                  checked={checkedSets[setIndex]}
+                  onChange={() => handleCheckboxChange(setIndex)}
+                  aria-label={`Mark Set ${setIndex + 1} as completed`}
+                />
+                Set {setIndex + 1} - {set.reps} reps x {set.weight} kg
+              </p>
+            ))}
+          </div>
           <div className="flex justify-end gap-2 mt-4">
             <Button
-              variant="outline"
+              type="button"
+              variant="secondary"
               size="icon"
               onClick={() => setIsEditing(true)}
             >
