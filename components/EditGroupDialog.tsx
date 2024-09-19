@@ -51,7 +51,7 @@ export default function EditGroupDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-[#1f1f23] border-[#26252a] text-white">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Group</DialogTitle>
         </DialogHeader>
@@ -71,7 +71,12 @@ export default function EditGroupDialog({
             required
           />
           <div className="flex justify-end gap-2">
-            <Button variant="destructive" onClick={onClose}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={onClose}
+              className="w-full"
+            >
               Cancel
             </Button>
             <Button
@@ -82,10 +87,12 @@ export default function EditGroupDialog({
                 editedGroup.description === ""
               }
               variant="secondary"
+              type="submit"
+              className="w-full"
             >
               {isUpdating ? (
                 <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  <Loader2 className="mr-1 h-5 w-5 animate-spin" />
                   Updating...
                 </>
               ) : (
