@@ -73,7 +73,7 @@ export default function Dashboard() {
   if (!isLoaded) {
     return (
       <div className="flex flex-col items-center justify-center min-h-svh text-white">
-        <BicepsFlexed className="animate-bounce h-10 w-10" />
+        <BicepsFlexed className="animate-bounce h-12 w-12" />
       </div>
     );
   }
@@ -84,21 +84,22 @@ export default function Dashboard() {
       <motion.h1
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8 text-3xl font-bold text-center text-white"
+        className="mb-6 mt-1 text-3xl font-bold text-center text-white"
       >
-        Welcome, {user?.firstName}!
+        Welcome {user?.firstName}!<br />
+        Ready to get started?
       </motion.h1>
       {isLoading ? (
         <Loader />
       ) : (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <div className="flex flex-col items-center m-4 space-y-4">
-            <Button onClick={() => setShowAddDialog(true)} variant="secondary">
-              <Plus className="mr-2 h-5 w-5" /> Add Group
+            <Button
+              type="button"
+              onClick={() => setShowAddDialog(true)}
+              variant="secondary"
+            >
+              <Plus className="mr-1 h-5 w-5" /> Add Group
             </Button>
             <AddGroupDialog
               isOpen={showAddDialog}
