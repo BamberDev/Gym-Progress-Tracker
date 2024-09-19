@@ -50,7 +50,7 @@ export default function EditExerciseDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-[#1f1f23] border-[#26252a] text-white">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Exercise</DialogTitle>
         </DialogHeader>
@@ -65,7 +65,7 @@ export default function EditExerciseDialog({
           <Input
             name="restTime"
             type="number"
-            placeholder="Rest time (min)"
+            placeholder="Rest between sets (min)"
             value={editedExercise.restTime}
             onChange={handleChange}
           />
@@ -76,17 +76,24 @@ export default function EditExerciseDialog({
             }
           />
           <div className="flex justify-end gap-2">
-            <Button variant="destructive" onClick={onClose}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={onClose}
+              className="w-full"
+            >
               Cancel
             </Button>
             <Button
               onClick={handleUpdate}
               disabled={isUpdating || editedExercise.name === ""}
               variant="secondary"
+              type="submit"
+              className="w-full"
             >
               {isUpdating ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-1 h-5 w-5 animate-spin" />
                   Updating...
                 </>
               ) : (

@@ -12,7 +12,7 @@ export default function GoBackButton() {
   return (
     <div className="absolute top-4 left-4">
       <Link href={path}>
-        <Button variant="secondary">
+        <Button type="button" variant="secondary">
           <MoveLeft className="h-5 w-5" />
         </Button>
       </Link>

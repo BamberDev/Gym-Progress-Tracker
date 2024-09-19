@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Pencil, Check } from "lucide-react";
+import { Pencil, Check, Plus } from "lucide-react";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 
 export default function ExerciseSetsManager({
@@ -74,7 +74,7 @@ export default function ExerciseSetsManager({
               />
             </>
           ) : (
-            <p className="text-white">
+            <p className="text-white text-sm xs:text-base sm:text-lg">
               Set {index + 1}: {set.reps} reps x {set.weight} kg
             </p>
           )}
@@ -109,8 +109,8 @@ export default function ExerciseSetsManager({
           </div>
         </div>
       ))}
-      {sets.length < 10 && isEditable && (
-        <div className="flex space-x-2">
+      {sets.length < 6 && isEditable && (
+        <div className="flex space-x-2 pt-2">
           <Input
             name="reps"
             type="number"
@@ -121,7 +121,7 @@ export default function ExerciseSetsManager({
           <Input
             name="weight"
             type="number"
-            placeholder="Weight (kg)"
+            placeholder="Weight"
             value={currentSet.weight || ""}
             onChange={handleNewSetChange}
           />
@@ -131,6 +131,7 @@ export default function ExerciseSetsManager({
             disabled={!currentSet.reps || !currentSet.weight}
             variant="secondary"
           >
+            <Plus className="mr-1 h-5 w-5 hidden xs:block" />
             Add Set
           </Button>
         </div>

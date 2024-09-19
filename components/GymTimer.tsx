@@ -79,9 +79,9 @@ export function GymTimer() {
         <Button
           variant="secondary"
           size="icon"
-          className="fixed bottom-3 left-3 rounded-full border border-[#26252a]"
+          className="fixed bottom-3 left-3 rounded-full border border-[#26252a] h-12 w-12"
         >
-          <Timer className="h-5 w-5" />
+          <Timer className="h-6 w-6" />
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -96,6 +96,7 @@ export function GymTimer() {
               value={duration}
               onChange={handleDurationChange}
               placeholder="Enter seconds (1-600)"
+              className="text-black"
             />
           </div>
           <div className="flex justify-center items-center text-4xl font-bold">
@@ -103,16 +104,31 @@ export function GymTimer() {
           </div>
           <div className="flex justify-center space-x-2">
             {!isActive ? (
-              <Button onClick={startTimer} disabled={disablesButton}>
-                <Play className="mr-2 h-5 w-5" /> Start
+              <Button
+                onClick={startTimer}
+                disabled={disablesButton}
+                variant={"secondary"}
+                className="w-full"
+              >
+                <Play className="mr-1 h-5 w-5" /> Start
               </Button>
             ) : (
-              <Button onClick={pauseTimer}>
-                <Pause className="mr-2 h-5 w-5" /> Pause
+              <Button
+                type="button"
+                onClick={pauseTimer}
+                variant={"secondary"}
+                className="w-full"
+              >
+                <Pause className="mr-1 h-5 w-5" /> Pause
               </Button>
             )}
-            <Button onClick={resetTimer} disabled={disablesButton}>
-              <RotateCcw className="mr-2 h-5 w-5" /> Reset
+            <Button
+              onClick={resetTimer}
+              disabled={disablesButton}
+              variant={"secondary"}
+              className="w-full"
+            >
+              <RotateCcw className="mr-1 h-5 w-5" /> Reset
             </Button>
           </div>
         </div>
