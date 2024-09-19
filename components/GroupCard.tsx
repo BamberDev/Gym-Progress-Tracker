@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
@@ -33,19 +39,22 @@ export default function GroupCard({
 
   return (
     <div>
-      <Card className="bg-[#1f1f23] border-[#26252a] text-white">
+      <Card>
         <CardHeader>
           <CardTitle>{group.name}</CardTitle>
+          <CardDescription>{group.description}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="mb-4">{group.description}</p>
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mt-2">
             <Link href={`/group/${group._id}`}>
-              <Button variant="secondary">View Exercises</Button>
+              <Button type="button" variant="secondary">
+                View Exercises
+              </Button>
             </Link>
             <div className="flex gap-2">
               <Button
-                variant="outline"
+                type="button"
+                variant="secondary"
                 size="icon"
                 onClick={() => setIsEditing(true)}
               >
