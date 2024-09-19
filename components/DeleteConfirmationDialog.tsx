@@ -24,11 +24,11 @@ export default function DeleteConfirmationDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="destructive" size="icon">
+        <Button type="button" variant="destructive" size="icon">
           <Trash2 className="h-5 w-5" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-[#1f1f23] border-[#26252a] text-white">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Are you sure?</DialogTitle>
         </DialogHeader>
@@ -38,17 +38,23 @@ export default function DeleteConfirmationDialog({
             {entityName}.
           </p>
           <div className="flex justify-end gap-2">
-            <Button variant="secondary" onClick={() => setIsOpen(false)}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setIsOpen(false)}
+              className="w-full"
+            >
               Cancel
             </Button>
             <Button
               variant="destructive"
               onClick={handleDelete}
               disabled={isDeleting}
+              className="w-full"
             >
               {isDeleting ? (
                 <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  <Loader2 className="mr-1 h-5 w-5 animate-spin" />
                   Deleting...
                 </>
               ) : (
