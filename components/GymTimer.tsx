@@ -11,12 +11,15 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Timer, Pause, Play, RotateCcw } from "lucide-react";
+import { Alert, AlertDescription } from "./ui/alert";
+import { timerSchema } from "@/utils/zodSchema/timerSchema";
 
 export function GymTimer() {
   const [isOpen, setIsOpen] = useState(false);
   const [time, setTime] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [duration, setDuration] = useState("");
+  const [errors, setErrors] = useState<string | null>(null);
   const intervalRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -39,14 +42,21 @@ export function GymTimer() {
     };
   }, [isActive, time]);
 
+  const durationInSeconds = parseInt(duration, 10);
+  const validationResult = timerSchema.safeParse(durationInSeconds);
+
   const startTimer = () => {
-    const durationInSeconds = parseInt(duration, 10);
-    if (time === 0 && durationInSeconds > 0) {
-      setTime(durationInSeconds);
-      setIsActive(true);
-    } else if (!isActive && time > 0) {
-      setIsActive(true);
+    if (!validationResult.success) {
+      setErrors(validationResult.error.errors[0].message);
+      return;
     }
+
+    setErrors("");
+
+    if (time === 0) {
+      setTime(durationInSeconds);
+    }
+    setIsActive(true);
   };
 
   const pauseTimer = () => {
@@ -54,12 +64,18 @@ export function GymTimer() {
   };
 
   const resetTimer = () => {
+    if (!validationResult.success) {
+      setErrors(validationResult.error.errors[0].message);
+      return;
+    }
+
     setIsActive(false);
-    setTime(parseInt(duration, 10) || 0);
+    setTime(durationInSeconds || 0);
   };
 
   const handleDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDuration(e.target.value);
+    setErrors("");
   };
 
   const formatTime = (seconds: number) => {
@@ -69,9 +85,6 @@ export function GymTimer() {
       .toString()
       .padStart(2, "0")}`;
   };
-
-  const disablesButton =
-    !duration || parseInt(duration) <= 0 || parseInt(duration) > 600;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -86,7 +99,7 @@ export function GymTimer() {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Rest Timer</DialogTitle>
+          <DialogTitle>Timer</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-4 py-4">
           <div>
@@ -106,7 +119,6 @@ export function GymTimer() {
             {!isActive ? (
               <Button
                 onClick={startTimer}
-                disabled={disablesButton}
                 variant={"secondary"}
                 className="w-full"
               >
@@ -124,13 +136,17 @@ export function GymTimer() {
             )}
             <Button
               onClick={resetTimer}
-              disabled={disablesButton}
               variant={"secondary"}
               className="w-full"
             >
               <RotateCcw className="mr-1 h-5 w-5" /> Reset
             </Button>
           </div>
+          {errors && (
+            <Alert variant="destructive">
+              <AlertDescription>{errors}</AlertDescription>
+            </Alert>
+          )}
         </div>
       </DialogContent>
     </Dialog>
