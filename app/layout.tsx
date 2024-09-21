@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <ClerkProvider appearance={{ baseTheme: dark }}>
       <html lang="en">
-        <body className="bg-[#303030] min-h-screen">
+        <body className="bg-[#303030] min-h-svh">
           <div className="absolute top-4 right-4 z-10">
             <SignedIn>
               <UserButton

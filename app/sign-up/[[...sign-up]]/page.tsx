@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function SignUpPage() {
   return (
-    <div className="relative min-h-screen flex items-center justify-center">
+    <div className="relative min-h-svh flex items-center justify-center">
       <div className="absolute inset-0">
         <Image
           src="/gym-bg-image.webp"
