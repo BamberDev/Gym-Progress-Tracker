@@ -9,6 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2, Plus } from "lucide-react";
 import ExerciseSetsManager from "./ExerciseSetsManager";
+import { exerciseSchema } from "@/utils/zodSchema/exerciseSchema";
+import { Alert, AlertDescription } from "./ui/alert";
+import { validateForm } from "@/utils/zodSchema/validateForm";
 
 export default function AddExerciseDialog({
   isOpen,
@@ -18,23 +21,40 @@ export default function AddExerciseDialog({
 }: AddExerciseDialogProps) {
   const initialExerciseState: NewExercise = {
     name: "",
-    restTime: "",
+    restTime: null,
     sets: [],
     groupId: groupId,
   };
 
   const [exercise, setExercise] = useState<NewExercise>(initialExerciseState);
   const [isAdding, setIsAdding] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setExercise((prev) => ({
       ...prev,
-      [name]: name === "restTime" ? parseFloat(value) : value,
+      [name]: name === "restTime" ? (value ? parseFloat(value) : null) : value,
     }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
   };
 
-  const addExercise = async (exercise: NewExercise) => {
+  const validateFormForAddExercise = () => {
+    const { valid, errors: validationErrors } = validateForm(
+      exerciseSchema,
+      exercise
+    );
+    setErrors(validationErrors);
+    return valid;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateFormForAddExercise()) {
+      return;
+    }
     try {
       setIsAdding(true);
       const response = await fetch("/api/exercises", {
@@ -57,11 +77,6 @@ export default function AddExerciseDialog({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    addExercise(exercise);
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
@@ -80,20 +95,22 @@ export default function AddExerciseDialog({
             name="restTime"
             type="number"
             placeholder="Rest between sets (min)"
-            value={exercise.restTime}
+            value={exercise.restTime ?? ""}
             onChange={handleChange}
+            required
           />
           <ExerciseSetsManager
             sets={exercise.sets}
-            onSetsChange={(newSets) =>
-              setExercise((prev) => ({ ...prev, sets: newSets }))
-            }
+            onSetsChange={(newSets) => {
+              setExercise((prev) => ({ ...prev, sets: newSets }));
+              if (errors.sets) {
+                setErrors((prev) => ({ ...prev, sets: "" }));
+              }
+            }}
           />
           <Button
             type="submit"
-            disabled={
-              isAdding || exercise.sets.length === 0 || exercise.name === ""
-            }
+            disabled={isAdding}
             variant="secondary"
             className="w-full"
           >
@@ -109,6 +126,13 @@ export default function AddExerciseDialog({
               </>
             )}
           </Button>
+          {(errors.name || errors.restTime || errors.sets) && (
+            <Alert variant="destructive">
+              <AlertDescription>
+                {errors.name || errors.restTime || errors.sets}
+              </AlertDescription>
+            </Alert>
+          )}
         </form>
       </DialogContent>
     </Dialog>
