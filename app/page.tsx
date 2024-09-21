@@ -30,18 +30,26 @@ export default function Home() {
         <p className="mb-4 text-xl">Track the Grind. Celebrate the Gains.</p>
         {userId ? (
           <Link href="/dashboard">
-            <Button size="lg" variant="secondary">
+            <Button type="button" size="lg" variant="secondary">
               Dashboard
             </Button>
           </Link>
         ) : (
           <Link href="/sign-in">
-            <Button size="lg" variant="secondary">
+            <Button type="button" size="lg" variant="secondary">
               Sign In
             </Button>
           </Link>
         )}
       </div>
+      <Link
+        href="https://github.com/BamberDev/Gym-Progress-Tracker"
+        className="absolute bottom-2 text-white"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <p>Coded by Kevin | &copy; {new Date().getFullYear()}</p>
+      </Link>
     </div>
   );
 }

@@ -6,7 +6,7 @@ export default function ExerciseList({
   onDelete,
 }: ExerciseListProps) {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
       {exercises.map((exercise, index) => (
         <ExerciseCard
           key={exercise._id}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,6 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import ExerciseSetsManager from "./ExerciseSetsManager";
+import { exerciseSchema } from "@/utils/zodSchema/exerciseSchema";
+import { validateForm } from "@/utils/zodSchema/validateForm";
+import { Alert, AlertDescription } from "./ui/alert";
 
 export default function EditExerciseDialog({
   exercise,
@@ -18,18 +21,40 @@ export default function EditExerciseDialog({
 }: EditExerciseButtonProps) {
   const [editedExercise, setEditedExercise] = useState<Exercise>(exercise);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  useEffect(() => {
+    setEditedExercise(exercise);
+    setErrors({});
+  }, [exercise]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setEditedExercise((prev) => ({
       ...prev,
-      [name]: name === "restTime" ? parseFloat(value) : value,
+      [name]: name === "restTime" ? (value ? parseFloat(value) : null) : value,
     }));
+
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const validateFormForEditExercise = () => {
+    const { valid, errors: validationErrors } = validateForm(
+      exerciseSchema,
+      editedExercise
+    );
+    setErrors(validationErrors);
+    return valid;
   };
 
   const handleUpdate = async () => {
-    setIsUpdating(true);
+    if (!validateFormForEditExercise()) {
+      return;
+    }
     try {
+      setIsUpdating(true);
       const response = await fetch(`/api/exercises/${editedExercise._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -66,14 +91,17 @@ export default function EditExerciseDialog({
             name="restTime"
             type="number"
             placeholder="Rest between sets (min)"
-            value={editedExercise.restTime}
+            value={editedExercise.restTime ?? ""}
             onChange={handleChange}
           />
           <ExerciseSetsManager
             sets={editedExercise.sets}
-            onSetsChange={(newSets) =>
-              setEditedExercise((prev) => ({ ...prev, sets: newSets }))
-            }
+            onSetsChange={(newSets) => {
+              setEditedExercise((prev) => ({ ...prev, sets: newSets }));
+              if (errors.sets) {
+                setErrors((prev) => ({ ...prev, sets: "" }));
+              }
+            }}
           />
           <div className="flex justify-end gap-2">
             <Button
@@ -86,21 +114,24 @@ export default function EditExerciseDialog({
             </Button>
             <Button
               onClick={handleUpdate}
-              disabled={isUpdating || editedExercise.name === ""}
+              disabled={isUpdating}
               variant="secondary"
-              type="submit"
               className="w-full"
             >
               {isUpdating ? (
-                <>
-                  <Loader2 className="mr-1 h-5 w-5 animate-spin" />
-                  Updating...
-                </>
+                <Loader2 className="mr-1 h-5 w-5 animate-spin" />
               ) : (
                 "Update"
               )}
             </Button>
           </div>
+          {(errors.name || errors.restTime || errors.sets) && (
+            <Alert variant="destructive">
+              <AlertDescription>
+                {errors.name || errors.restTime || errors.sets}
+              </AlertDescription>
+            </Alert>
+          )}
         </div>
       </DialogContent>
     </Dialog>

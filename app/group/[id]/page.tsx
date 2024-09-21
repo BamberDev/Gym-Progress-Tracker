@@ -98,7 +98,7 @@ export default function GroupPage({ params }: { params: { id: string } }) {
           <motion.h1
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6 mt-1 text-3xl font-bold text-center text-white"
+            className="mb-6 mt-1 text-3xl font-bold text-center text-white truncate"
           >
             {group?.name}
           </motion.h1>

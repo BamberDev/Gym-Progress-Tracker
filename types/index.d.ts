@@ -1,3 +1,4 @@
+// Exercise-related types
 type ExerciseSet = {
   reps: number;
   weight: number;
@@ -9,17 +10,18 @@ type Exercise = {
   userId: string;
   userName: string;
   name: string;
-  restTime: string;
+  restTime: number | null;
   sets: ExerciseSet[];
 };
 
 type NewExercise = {
   name: string;
-  restTime: string;
+  restTime: number | null;
   sets: ExerciseSet[];
   groupId: string;
 };
 
+// Group-related types
 type Group = {
   _id?: string;
   userId: string;
@@ -29,6 +31,7 @@ type Group = {
 
 type NewGroup = Omit<Group, "_id" | "userId">;
 
+// Component Props related to Exercises
 type ExerciseListProps = {
   exercises: Exercise[];
   onUpdate: (exercise: Exercise) => void;
@@ -49,12 +52,6 @@ type AddExerciseDialogProps = {
   groupId: string;
 };
 
-type DeleteConfirmationDialogProps = {
-  onDelete: () => void;
-  entityName: string;
-  isDeleting?: boolean;
-};
-
 type EditExerciseButtonProps = {
   exercise: Exercise;
   onUpdate: (exercise: Exercise) => void;
@@ -68,6 +65,7 @@ type ExerciseSetsManagerProps = {
   isEditable?: boolean;
 };
 
+// Component Props related to Groups
 type GroupListProps = {
   groups: Group[];
   onUpdate: (group: Group) => void;
@@ -91,6 +89,13 @@ type EditGroupDialogProps = {
   onUpdate: (group: Group) => void;
   isOpen: boolean;
   onClose: () => void;
+};
+
+// Utility Component Props
+type DeleteConfirmationDialogProps = {
+  onDelete: () => void;
+  entityName: string;
+  isDeleting?: boolean;
 };
 
 type SearchBarProps = {

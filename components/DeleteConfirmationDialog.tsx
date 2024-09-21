@@ -33,7 +33,7 @@ export default function DeleteConfirmationDialog({
           <DialogTitle>Are you sure?</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <p>
+          <p className="text-center">
             This action cannot be undone. This will permanently delete the{" "}
             {entityName}.
           </p>

@@ -3,6 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Pencil, Check, Plus } from "lucide-react";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
+import { exerciseSetSchema } from "@/utils/zodSchema/exerciseSchema";
+import { Alert, AlertDescription } from "./ui/alert";
 
 export default function ExerciseSetsManager({
   sets,
@@ -14,27 +16,45 @@ export default function ExerciseSetsManager({
     weight: 0,
   });
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [errors, setErrors] = useState<string>("");
+
+  const validateSet = (set: ExerciseSet) => {
+    const result = exerciseSetSchema.safeParse(set);
+    if (!result.success) {
+      setErrors(result.error.errors.map((err) => err.message).join("\n"));
+      return false;
+    }
+    setErrors("");
+    return true;
+  };
 
   const handleSetChange = (
     index: number,
     field: keyof ExerciseSet,
-    value: number
+    value: string
   ) => {
-    const updatedSets = sets.map((set, i) =>
-      i === index ? { ...set, [field]: value } : set
-    );
+    setErrors("");
+    const parsedValue = value === "" ? 0 : Number(value);
+    const updatedSet = { ...sets[index], [field]: parsedValue };
+    const updatedSets = sets.map((set, i) => (i === index ? updatedSet : set));
     onSetsChange(updatedSets);
   };
 
   const handleNewSetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setErrors("");
     const { name, value } = e.target;
-    setCurrentSet((prev) => ({ ...prev, [name]: parseInt(value) || 0 }));
+    const parsedValue = value === "" ? 0 : parseInt(value);
+    setCurrentSet((prev) => ({
+      ...prev,
+      [name]: parsedValue,
+    }));
   };
 
   const addSet = () => {
-    if (sets.length < 10 && currentSet.reps && currentSet.weight) {
+    if (sets.length < 6 && validateSet(currentSet)) {
       onSetsChange([...sets, currentSet]);
       setCurrentSet({ reps: 0, weight: 0 });
+      setErrors("");
     }
   };
 
@@ -47,6 +67,13 @@ export default function ExerciseSetsManager({
     setEditingIndex(editingIndex === index ? null : index);
   };
 
+  const handleSetSubmit = (index: number) => {
+    const setToValidate = sets[index];
+    if (validateSet(setToValidate)) {
+      setEditingIndex(null);
+    }
+  };
+
   return (
     <div className="space-y-2">
       {sets.map((set, index) => (
@@ -57,20 +84,20 @@ export default function ExerciseSetsManager({
           {editingIndex === index ? (
             <>
               <Input
+                name="reps"
                 type="number"
-                value={set.reps}
-                onChange={(e) =>
-                  handleSetChange(index, "reps", parseInt(e.target.value))
-                }
+                value={set.reps || ""}
+                onChange={(e) => handleSetChange(index, "reps", e.target.value)}
                 placeholder="Reps"
               />
               <Input
+                name="weight"
                 type="number"
-                value={set.weight}
+                value={set.weight || ""}
                 onChange={(e) =>
-                  handleSetChange(index, "weight", parseFloat(e.target.value))
+                  handleSetChange(index, "weight", e.target.value)
                 }
-                placeholder="Weight (kg)"
+                placeholder="Weight"
               />
             </>
           ) : (
@@ -84,7 +111,7 @@ export default function ExerciseSetsManager({
                 type="button"
                 variant="secondary"
                 size="icon"
-                onClick={() => toggleSetEdit(index)}
+                onClick={() => handleSetSubmit(index)}
               >
                 <Check className="h-5 w-5 text-black" />
               </Button>
@@ -125,15 +152,19 @@ export default function ExerciseSetsManager({
             value={currentSet.weight || ""}
             onChange={handleNewSetChange}
           />
-          <Button
-            type="button"
-            onClick={addSet}
-            disabled={!currentSet.reps || !currentSet.weight}
-            variant="secondary"
-          >
+          <Button type="button" onClick={addSet} variant="secondary">
             <Plus className="mr-1 h-5 w-5 hidden xs:block" />
             Add Set
           </Button>
+        </div>
+      )}
+      {errors && (
+        <div className="pt-2">
+          <Alert variant="destructive">
+            <AlertDescription>
+              <p className="whitespace-pre-wrap">{errors}</p>
+            </AlertDescription>
+          </Alert>
         </div>
       )}
     </div>
