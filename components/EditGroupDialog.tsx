@@ -9,6 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { groupSchema } from "@/utils/zodSchema/groupSchema";
+import { validateForm } from "@/utils/zodSchema/validateForm";
 
 export default function EditGroupDialog({
   group,
@@ -17,6 +20,7 @@ export default function EditGroupDialog({
   onClose,
 }: EditGroupDialogProps) {
   const [editedGroup, setEditedGroup] = useState<Group>(group);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleChange = (
@@ -24,11 +28,24 @@ export default function EditGroupDialog({
   ) => {
     const { name, value } = e.target;
     setEditedGroup((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const validateFormForEditGroup = () => {
+    const { valid, errors: validationErrors } = validateForm(
+      groupSchema,
+      editedGroup
+    );
+    setErrors(validationErrors);
+    return valid;
   };
 
   const handleUpdate = async () => {
-    setIsUpdating(true);
+    if (!validateFormForEditGroup()) return;
     try {
+      setIsUpdating(true);
       const response = await fetch(`/api/groups/${editedGroup._id}`, {
         method: "PUT",
         headers: {
@@ -81,11 +98,7 @@ export default function EditGroupDialog({
             </Button>
             <Button
               onClick={handleUpdate}
-              disabled={
-                isUpdating ||
-                editedGroup.name === "" ||
-                editedGroup.description === ""
-              }
+              disabled={isUpdating}
               variant="secondary"
               type="submit"
               className="w-full"
@@ -100,6 +113,13 @@ export default function EditGroupDialog({
               )}
             </Button>
           </div>
+          {(errors.name || errors.description) && (
+            <Alert variant="destructive">
+              <AlertDescription>
+                {errors.name || errors.description}
+              </AlertDescription>
+            </Alert>
+          )}
         </div>
       </DialogContent>
     </Dialog>
