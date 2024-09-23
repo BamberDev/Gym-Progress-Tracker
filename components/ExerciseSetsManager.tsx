@@ -3,8 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Pencil, Check, Plus } from "lucide-react";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
-import { exerciseSetSchema } from "@/utils/zodSchema/exerciseSchema";
 import { Alert, AlertDescription } from "./ui/alert";
+import { exerciseSetSchema } from "@/utils/zodSchema";
 
 export default function ExerciseSetsManager({
   sets,

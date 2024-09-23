@@ -9,9 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import ExerciseSetsManager from "./ExerciseSetsManager";
-import { exerciseSchema } from "@/utils/zodSchema/exerciseSchema";
-import { validateForm } from "@/utils/zodSchema/validateForm";
 import { Alert, AlertDescription } from "./ui/alert";
+import { clientExerciseSchema, validateForm } from "@/utils/zodSchema";
 
 export default function EditExerciseDialog({
   exercise,
@@ -42,7 +41,7 @@ export default function EditExerciseDialog({
 
   const validateFormForEditExercise = () => {
     const { valid, errors: validationErrors } = validateForm(
-      exerciseSchema,
+      clientExerciseSchema,
       editedExercise
     );
     setErrors(validationErrors);

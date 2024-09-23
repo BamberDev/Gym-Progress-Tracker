@@ -10,8 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { groupSchema } from "@/utils/zodSchema/groupSchema";
-import { validateForm } from "@/utils/zodSchema/validateForm";
+import { clientGroupSchema, validateForm } from "@/utils/zodSchema";
 
 export default function EditGroupDialog({
   group,
@@ -35,7 +34,7 @@ export default function EditGroupDialog({
 
   const validateFormForEditGroup = () => {
     const { valid, errors: validationErrors } = validateForm(
-      groupSchema,
+      clientGroupSchema,
       editedGroup
     );
     setErrors(validationErrors);
