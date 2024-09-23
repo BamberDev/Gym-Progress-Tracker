@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { MongoClient } from "mongodb";
 import { auth } from "@clerk/nextjs/server";
+import { serverGroupSchema } from "@/utils/zodSchema";
 
 const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri as string);
@@ -38,9 +39,11 @@ export async function POST(request: Request) {
     const group = await request.json();
     group.userId = userId;
 
-    if (!group.name || !group.description) {
+    const validation = serverGroupSchema.safeParse(group);
+
+    if (!validation.success) {
       return NextResponse.json(
-        { error: "Invalid group data" },
+        { error: "Invalid group data", errors: validation.error.format() },
         { status: 400 }
       );
     }
