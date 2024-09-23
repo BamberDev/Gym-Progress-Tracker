@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { MongoClient, ObjectId } from "mongodb";
 import { auth } from "@clerk/nextjs/server";
+import { serverExerciseSchema } from "@/utils/zodSchema";
 
 const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri as string);
@@ -17,6 +18,15 @@ export async function PUT(
 
     const exercise = await request.json();
     const { id } = params;
+
+    const validation = serverExerciseSchema.safeParse(exercise);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: "Invalid exercise data", errors: validation.error.format() },
+        { status: 400 }
+      );
+    }
 
     await client.connect();
     const database = client.db("gym-progress");
