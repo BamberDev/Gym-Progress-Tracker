@@ -10,8 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Plus } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { groupSchema } from "@/utils/zodSchema/groupSchema";
-import { validateForm } from "@/utils/zodSchema/validateForm";
+import { clientGroupSchema, validateForm } from "@/utils/zodSchema";
 
 export default function AddGroupDialog({
   isOpen,
@@ -39,7 +38,7 @@ export default function AddGroupDialog({
 
   const validateFormForGroup = () => {
     const { valid, errors: validationErrors } = validateForm(
-      groupSchema,
+      clientGroupSchema,
       group
     );
     setErrors(validationErrors);

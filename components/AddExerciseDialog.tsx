@@ -9,9 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2, Plus } from "lucide-react";
 import ExerciseSetsManager from "./ExerciseSetsManager";
-import { exerciseSchema } from "@/utils/zodSchema/exerciseSchema";
 import { Alert, AlertDescription } from "./ui/alert";
-import { validateForm } from "@/utils/zodSchema/validateForm";
+import { clientExerciseSchema, validateForm } from "@/utils/zodSchema";
 
 export default function AddExerciseDialog({
   isOpen,
@@ -43,7 +42,7 @@ export default function AddExerciseDialog({
 
   const validateFormForAddExercise = () => {
     const { valid, errors: validationErrors } = validateForm(
-      exerciseSchema,
+      clientExerciseSchema,
       exercise
     );
     setErrors(validationErrors);

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { MongoClient, ObjectId } from "mongodb";
 import { auth } from "@clerk/nextjs/server";
+import { serverGroupSchema } from "@/utils/zodSchema";
 
 const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri as string);
@@ -52,11 +53,20 @@ export async function PUT(
     const group = await request.json();
     const { id } = params;
 
+    const validation = serverGroupSchema.safeParse(group);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: "Invalid group data", issues: validation.error.errors },
+        { status: 400 }
+      );
+    }
+
     await client.connect();
     const database = client.db("gym-progress");
     const groups = database.collection("groups");
 
-    const updateFields = { ...group };
+    const updateFields = { ...validation.data };
     delete updateFields._id;
 
     const result = await groups.updateOne(
