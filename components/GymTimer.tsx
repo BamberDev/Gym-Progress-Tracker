@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Timer, Pause, Play, RotateCcw } from "lucide-react";
 import { Alert, AlertDescription } from "./ui/alert";
-import { timerSchema } from "@/utils/zodSchema/timerSchema";
+import { timerSchema } from "@/utils/zodSchema";
 
 export function GymTimer() {
   const [isOpen, setIsOpen] = useState(false);
@@ -46,7 +46,10 @@ export function GymTimer() {
   const validationResult = timerSchema.safeParse(durationInSeconds);
 
   const startTimer = () => {
-    if (!validationResult.success) {
+    if (isNaN(durationInSeconds) || !durationInSeconds) {
+      setErrors("Please enter a valid number");
+      return;
+    } else if (!validationResult.success) {
       setErrors(validationResult.error.errors[0].message);
       return;
     }
@@ -64,7 +67,10 @@ export function GymTimer() {
   };
 
   const resetTimer = () => {
-    if (!validationResult.success) {
+    if (isNaN(durationInSeconds) || !durationInSeconds) {
+      setErrors("Please enter a valid number");
+      return;
+    } else if (!validationResult.success) {
       setErrors(validationResult.error.errors[0].message);
       return;
     }
