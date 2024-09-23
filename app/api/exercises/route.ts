@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { MongoClient } from "mongodb";
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { serverExerciseSchema } from "@/utils/zodSchema";
 
 const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri as string);
@@ -44,14 +45,11 @@ export async function POST(request: Request) {
     exercise.userId = userId;
     exercise.userName = `${user?.firstName} ${user?.lastName}`;
 
-    if (
-      !exercise.name ||
-      !exercise.groupId ||
-      !Array.isArray(exercise.sets) ||
-      exercise.sets.length === 0
-    ) {
+    const validation = serverExerciseSchema.safeParse(exercise);
+
+    if (!validation.success) {
       return NextResponse.json(
-        { error: "Invalid exercise data", receivedData: exercise },
+        { error: "Invalid exercise data", errors: validation.error.format() },
         { status: 400 }
       );
     }
