@@ -84,10 +84,9 @@ export default function Dashboard() {
       <motion.h1
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-6 mt-1 text-3xl font-bold text-center text-white flex flex-col items-center"
+        className="mb-5 mt-1 text-2xl sm:text-3xl font-bold text-center text-white"
       >
-        Welcome {user?.firstName}!<BicepsFlexed className="h-8 w-8 my-1" />
-        TIME TO GET STRONGER
+        Welcome back {user?.firstName}!
       </motion.h1>
       {isLoading ? (
         <Loader />
