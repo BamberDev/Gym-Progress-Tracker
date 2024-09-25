@@ -9,8 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2, Plus } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { clientGroupSchema, validateForm } from "@/utils/zodSchema";
+import ErrorAlert from "./ErrorAlert";
+import { useErrorTimeout } from "@/hooks/useErrorTimeout";
 
 export default function AddGroupDialog({
   isOpen,
@@ -25,6 +26,11 @@ export default function AddGroupDialog({
   const [group, setGroup] = useState<NewGroup>(initialGroupState);
   const [isAdding, setIsAdding] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  const { clearErrorTimer, clearExistingTimer } = useErrorTimeout(() =>
+    setFetchError(null)
+  );
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -60,20 +66,33 @@ export default function AddGroupDialog({
         body: JSON.stringify(group),
       });
       if (!response.ok) {
-        throw new Error("Failed to add group");
+        throw new Error("Failed to add group. Please try again later.");
       }
       const newGroup = await response.json();
       onSubmit(newGroup);
       setGroup(initialGroupState);
     } catch (error) {
-      console.error("Error adding group:", error);
+      if (error instanceof Error) {
+        setFetchError(error.message);
+      } else {
+        setFetchError("An unexpected error occurred.");
+      }
+      clearExistingTimer();
+      clearErrorTimer();
     } finally {
       setIsAdding(false);
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={() => {
+        onClose();
+        clearErrorTimer();
+        setFetchError(null);
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add New Group</DialogTitle>
@@ -115,12 +134,10 @@ export default function AddGroupDialog({
               </>
             )}
           </Button>
-          {(errors.name || errors.description) && (
-            <Alert variant="destructive">
-              <AlertDescription>
-                {errors.name || errors.description}
-              </AlertDescription>
-            </Alert>
+          {(errors.name || errors.description || fetchError) && (
+            <ErrorAlert
+              alertDescription={errors.name || errors.description || fetchError}
+            />
           )}
         </form>
       </DialogContent>

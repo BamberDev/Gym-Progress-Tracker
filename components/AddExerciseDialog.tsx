@@ -9,8 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2, Plus } from "lucide-react";
 import ExerciseSetsManager from "./ExerciseSetsManager";
-import { Alert, AlertDescription } from "./ui/alert";
 import { clientExerciseSchema, validateForm } from "@/utils/zodSchema";
+import ErrorAlert from "./ErrorAlert";
+import { useErrorTimeout } from "@/hooks/useErrorTimeout";
 
 export default function AddExerciseDialog({
   isOpen,
@@ -28,6 +29,11 @@ export default function AddExerciseDialog({
   const [exercise, setExercise] = useState<NewExercise>(initialExerciseState);
   const [isAdding, setIsAdding] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  const { clearErrorTimer, clearExistingTimer } = useErrorTimeout(() =>
+    setFetchError(null)
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -64,20 +70,33 @@ export default function AddExerciseDialog({
         body: JSON.stringify(exercise),
       });
       if (!response.ok) {
-        throw new Error("Failed to add exercise");
+        throw new Error("Failed to add exercise. Please try again later.");
       }
       const newExercise = await response.json();
       onSubmit(newExercise);
       setExercise(initialExerciseState);
     } catch (error) {
-      console.error("Error adding exercise:", error);
+      if (error instanceof Error) {
+        setFetchError(error.message);
+      } else {
+        setFetchError("An unexpected error occurred.");
+      }
+      clearExistingTimer();
+      clearErrorTimer();
     } finally {
       setIsAdding(false);
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={() => {
+        onClose();
+        clearErrorTimer();
+        setFetchError(null);
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add New Exercise</DialogTitle>
@@ -125,12 +144,12 @@ export default function AddExerciseDialog({
               </>
             )}
           </Button>
-          {(errors.name || errors.restTime || errors.sets) && (
-            <Alert variant="destructive">
-              <AlertDescription>
-                {errors.name || errors.restTime || errors.sets}
-              </AlertDescription>
-            </Alert>
+          {(errors.name || errors.restTime || errors.sets || fetchError) && (
+            <ErrorAlert
+              alertDescription={
+                errors.name || errors.restTime || errors.sets || fetchError
+              }
+            />
           )}
         </form>
       </DialogContent>

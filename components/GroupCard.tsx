@@ -11,6 +11,8 @@ import { Pencil } from "lucide-react";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import Link from "next/link";
 import EditGroupDialog from "./EditGroupDialog";
+import ErrorAlert from "./ErrorAlert";
+import { useErrorTimeout } from "@/hooks/useErrorTimeout";
 
 export default function GroupCard({
   group,
@@ -19,6 +21,11 @@ export default function GroupCard({
 }: GroupCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  const { clearErrorTimer, clearExistingTimer } = useErrorTimeout(() =>
+    setFetchError(null)
+  );
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -27,11 +34,17 @@ export default function GroupCard({
         method: "DELETE",
       });
       if (!response.ok) {
-        throw new Error("Failed to delete group");
+        throw new Error("Failed to delete group. Please try again later.");
       }
       onDelete(group._id!);
     } catch (error) {
-      console.error("Error deleting group:", error);
+      if (error instanceof Error) {
+        setFetchError(error.message);
+      } else {
+        setFetchError("An unexpected error occurred.");
+      }
+      clearExistingTimer();
+      clearErrorTimer();
     } finally {
       setIsDeleting(false);
     }
@@ -67,6 +80,11 @@ export default function GroupCard({
               />
             </div>
           </div>
+          {fetchError && (
+            <div className="mt-2">
+              <ErrorAlert alertDescription={fetchError} />
+            </div>
+          )}
         </CardContent>
       </Card>
       <EditGroupDialog

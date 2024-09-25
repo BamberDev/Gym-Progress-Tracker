@@ -9,8 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import ExerciseSetsManager from "./ExerciseSetsManager";
-import { Alert, AlertDescription } from "./ui/alert";
 import { clientExerciseSchema, validateForm } from "@/utils/zodSchema";
+import ErrorAlert from "./ErrorAlert";
+import { useErrorTimeout } from "@/hooks/useErrorTimeout";
 
 export default function EditExerciseDialog({
   exercise,
@@ -21,6 +22,11 @@ export default function EditExerciseDialog({
   const [editedExercise, setEditedExercise] = useState<Exercise>(exercise);
   const [isUpdating, setIsUpdating] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  const { clearErrorTimer, clearExistingTimer } = useErrorTimeout(() =>
+    setFetchError(null)
+  );
 
   useEffect(() => {
     setEditedExercise(exercise);
@@ -60,20 +66,33 @@ export default function EditExerciseDialog({
         body: JSON.stringify(editedExercise),
       });
       if (!response.ok) {
-        throw new Error("Failed to update exercise");
+        throw new Error("Failed to update exercise. Please try again later.");
       }
       const updatedExercise = await response.json();
       onUpdate(updatedExercise);
       onClose();
     } catch (error) {
-      console.error("Error updating exercise:", error);
+      if (error instanceof Error) {
+        setFetchError(error.message);
+      } else {
+        setFetchError("An unexpected error occurred.");
+      }
+      clearExistingTimer();
+      clearErrorTimer();
     } finally {
       setIsUpdating(false);
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={() => {
+        onClose();
+        clearErrorTimer();
+        setFetchError(null);
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Exercise</DialogTitle>
@@ -124,12 +143,12 @@ export default function EditExerciseDialog({
               )}
             </Button>
           </div>
-          {(errors.name || errors.restTime || errors.sets) && (
-            <Alert variant="destructive">
-              <AlertDescription>
-                {errors.name || errors.restTime || errors.sets}
-              </AlertDescription>
-            </Alert>
+          {(errors.name || errors.restTime || errors.sets || fetchError) && (
+            <ErrorAlert
+              alertDescription={
+                errors.name || errors.restTime || errors.sets || fetchError
+              }
+            />
           )}
         </div>
       </DialogContent>

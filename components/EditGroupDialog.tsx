@@ -9,8 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { clientGroupSchema, validateForm } from "@/utils/zodSchema";
+import { useErrorTimeout } from "@/hooks/useErrorTimeout";
+import ErrorAlert from "./ErrorAlert";
 
 export default function EditGroupDialog({
   group,
@@ -21,6 +22,11 @@ export default function EditGroupDialog({
   const [editedGroup, setEditedGroup] = useState<Group>(group);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isUpdating, setIsUpdating] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  const { clearErrorTimer, clearExistingTimer } = useErrorTimeout(() =>
+    setFetchError(null)
+  );
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -53,20 +59,33 @@ export default function EditGroupDialog({
         body: JSON.stringify(editedGroup),
       });
       if (!response.ok) {
-        throw new Error("Failed to update group");
+        throw new Error("Failed to update group. Please try again later.");
       }
       const updatedGroup = await response.json();
       onUpdate(updatedGroup);
       onClose();
     } catch (error) {
-      console.error("Error updating group:", error);
+      if (error instanceof Error) {
+        setFetchError(error.message);
+      } else {
+        setFetchError("An unexpected error occurred.");
+      }
+      clearExistingTimer();
+      clearErrorTimer();
     } finally {
       setIsUpdating(false);
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={() => {
+        onClose();
+        clearErrorTimer();
+        setFetchError(null);
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Group</DialogTitle>
@@ -112,12 +131,10 @@ export default function EditGroupDialog({
               )}
             </Button>
           </div>
-          {(errors.name || errors.description) && (
-            <Alert variant="destructive">
-              <AlertDescription>
-                {errors.name || errors.description}
-              </AlertDescription>
-            </Alert>
+          {(errors.name || errors.description || fetchError) && (
+            <ErrorAlert
+              alertDescription={errors.name || errors.description || fetchError}
+            />
           )}
         </div>
       </DialogContent>

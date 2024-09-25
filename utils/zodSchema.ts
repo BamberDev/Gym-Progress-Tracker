@@ -14,6 +14,7 @@ export const exerciseSetSchema = z.object({
 export const clientExerciseSchema = z.object({
   name: z
     .string()
+    .trim()
     .min(1, "Exercise name must be at least 1 character long")
     .max(50, "Exercise name must not exceed 50 characters"),
   restTime: z
@@ -35,10 +36,12 @@ export const serverExerciseSchema = clientExerciseSchema.extend({
 export const clientGroupSchema = z.object({
   name: z
     .string()
+    .trim()
     .min(1, "Name must be at least 1 character long")
     .max(50, "Name must not exceed 50 characters"),
   description: z
     .string()
+    .trim()
     .min(1, "Description must be at least 1 character long")
     .max(100, "Description must not exceed 100 characters"),
 });
