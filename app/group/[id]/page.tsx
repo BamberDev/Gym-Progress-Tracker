@@ -94,14 +94,13 @@ export default function GroupPage({ params }: { params: { id: string } }) {
       {isLoading ? (
         <Loader />
       ) : (
-        <div>
-          <motion.h1
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6 mt-1 text-3xl font-bold text-center text-white truncate"
-          >
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+        >
+          <h1 className="mb-6 mt-1 text-3xl font-bold text-center text-white truncate">
             {group?.name}
-          </motion.h1>
+          </h1>
           <div className="flex flex-col items-center m-4 space-y-4">
             <Button onClick={() => setShowAddDialog(true)} variant="secondary">
               <Plus className="mr-1 h-5 w-5" /> Add Exercise
@@ -133,7 +132,7 @@ export default function GroupPage({ params }: { params: { id: string } }) {
               </p>
             </div>
           )}
-        </div>
+        </motion.div>
       )}
     </div>
   );

@@ -76,6 +76,7 @@ type GroupCardProps = {
   group: Group;
   onUpdate: (group: Group) => void;
   onDelete: (id: string) => void;
+  index: number;
 };
 
 type AddGroupDialogProps = {
