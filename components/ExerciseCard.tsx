@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import EditExerciseDialog from "./EditExerciseDialog";
+import { useErrorTimeout } from "@/hooks/useErrorTimeout";
+import ErrorAlert from "./ErrorAlert";
 
 export default function ExerciseCard({
   exercise,
@@ -16,6 +18,11 @@ export default function ExerciseCard({
   const [isDeleting, setIsDeleting] = useState(false);
   const [checkedSets, setCheckedSets] = useState<boolean[]>(
     new Array(exercise.sets.length).fill(false)
+  );
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  const { clearErrorTimer, clearExistingTimer } = useErrorTimeout(() =>
+    setFetchError(null)
   );
 
   const handleCheckboxChange = (setIndex: number) => {
@@ -31,11 +38,17 @@ export default function ExerciseCard({
         method: "DELETE",
       });
       if (!response.ok) {
-        throw new Error("Failed to delete exercise");
+        throw new Error("Failed to delete exercise. Please try again later.");
       }
       onDelete(exercise._id!);
     } catch (error) {
-      console.error("Error deleting exercise:", error);
+      if (error instanceof Error) {
+        setFetchError(error.message);
+      } else {
+        setFetchError("An unexpected error occurred.");
+      }
+      clearExistingTimer();
+      clearErrorTimer();
     } finally {
       setIsDeleting(false);
     }
@@ -89,6 +102,11 @@ export default function ExerciseCard({
               isDeleting={isDeleting}
             />
           </div>
+          {fetchError && (
+            <div className="mt-2">
+              <ErrorAlert alertDescription={fetchError} />
+            </div>
+          )}
         </CardContent>
       </Card>
       <EditExerciseDialog
