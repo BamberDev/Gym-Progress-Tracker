@@ -7,12 +7,13 @@ export default function GroupList({
 }: GroupListProps) {
   return (
     <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-      {groups.map((group) => (
+      {groups.map((group, index) => (
         <GroupCard
           key={group._id}
           group={group}
           onUpdate={onUpdate}
           onDelete={onDelete}
+          index={index}
         />
       ))}
     </div>
