@@ -82,8 +82,8 @@ export default function Dashboard() {
     <div className="container mx-auto p-4">
       <GoBackButton />
       <motion.h1
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
         className="mb-5 mt-1 text-2xl sm:text-3xl font-bold text-center text-white"
       >
         Welcome back {user?.firstName}!
@@ -91,7 +91,10 @@ export default function Dashboard() {
       {isLoading ? (
         <Loader />
       ) : (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+        >
           <div className="flex flex-col items-center m-4 space-y-4">
             <Button
               type="button"
