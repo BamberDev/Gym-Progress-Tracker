@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import {
   Card,
   CardContent,
@@ -18,6 +19,7 @@ export default function GroupCard({
   group,
   onUpdate,
   onDelete,
+  index,
 }: GroupCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -51,7 +53,11 @@ export default function GroupCard({
   };
 
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0, x: -50 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: index * 0.1 }}
+    >
       <Card>
         <CardHeader>
           <CardTitle>{group.name}</CardTitle>
@@ -93,6 +99,6 @@ export default function GroupCard({
         isOpen={isEditing}
         onClose={() => setIsEditing(false)}
       />
-    </div>
+    </motion.div>
   );
 }
