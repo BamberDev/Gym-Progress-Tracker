@@ -110,7 +110,6 @@ type EditGroupDialogProps = {
 type DeleteConfirmationDialogProps = {
   onDelete: () => void;
   entityName: string;
-  isDeleting?: boolean;
 };
 
 type SearchBarProps = {

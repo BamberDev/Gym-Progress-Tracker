@@ -22,7 +22,6 @@ export default function GroupCard({
   index,
 }: GroupCardProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
   const { clearErrorTimer, clearExistingTimer } = useErrorTimeout(() =>
@@ -30,7 +29,6 @@ export default function GroupCard({
   );
 
   const handleDelete = async () => {
-    setIsDeleting(true);
     try {
       const response = await fetch(`/api/groups/${group._id}`, {
         method: "DELETE",
@@ -47,8 +45,6 @@ export default function GroupCard({
       }
       clearExistingTimer();
       clearErrorTimer();
-    } finally {
-      setIsDeleting(false);
     }
   };
 
@@ -82,7 +78,6 @@ export default function GroupCard({
               <DeleteConfirmationDialog
                 onDelete={handleDelete}
                 entityName="group"
-                isDeleting={isDeleting}
               />
             </div>
           </div>

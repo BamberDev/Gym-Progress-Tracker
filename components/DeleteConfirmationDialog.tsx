@@ -13,13 +13,18 @@ import { Loader2, Trash2 } from "lucide-react";
 export default function DeleteConfirmationDialog({
   onDelete,
   entityName,
-  isDeleting,
 }: DeleteConfirmationDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleDelete = () => {
-    onDelete();
-    setIsOpen(false);
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await onDelete();
+    } finally {
+      setIsDeleting(false);
+      setIsOpen(false);
+    }
   };
 
   return (
@@ -38,7 +43,7 @@ export default function DeleteConfirmationDialog({
         </DialogHeader>
         <div className="space-y-4">
           <p className="text-center">
-            This action cannot be undone. This will permanently delete the{" "}
+            This action cannot be undone. This will permanently delete this{" "}
             {entityName}.
           </p>
           <div className="flex justify-end gap-2">
@@ -47,6 +52,7 @@ export default function DeleteConfirmationDialog({
               variant="secondary"
               onClick={() => setIsOpen(false)}
               className="w-full"
+              disabled={isDeleting}
             >
               Cancel
             </Button>

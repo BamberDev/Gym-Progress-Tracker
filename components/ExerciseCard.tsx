@@ -16,7 +16,6 @@ export default function ExerciseCard({
   index,
 }: ExerciseCardProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [checkedSets, setCheckedSets] = useState<boolean[]>(
     new Array(exercise.sets.length).fill(false)
@@ -34,7 +33,6 @@ export default function ExerciseCard({
   };
 
   const handleDelete = async () => {
-    setIsDeleting(true);
     try {
       const response = await fetch(`/api/exercises/${exercise._id}`, {
         method: "DELETE",
@@ -51,8 +49,6 @@ export default function ExerciseCard({
       }
       clearExistingTimer();
       clearErrorTimer();
-    } finally {
-      setIsDeleting(false);
     }
   };
 
@@ -110,7 +106,6 @@ export default function ExerciseCard({
               <DeleteConfirmationDialog
                 onDelete={handleDelete}
                 entityName="exercise"
-                isDeleting={isDeleting}
               />
             </div>
           </div>
