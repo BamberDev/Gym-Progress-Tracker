@@ -101,7 +101,7 @@ export default function AddExerciseDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add New Exercise</DialogTitle>
-          <DialogDescription className="hidden">
+          <DialogDescription className="sr-only">
             Add exercise dialog
           </DialogDescription>
         </DialogHeader>

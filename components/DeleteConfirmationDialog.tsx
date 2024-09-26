@@ -32,7 +32,7 @@ export default function DeleteConfirmationDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Are you sure?</DialogTitle>
-          <DialogDescription className="hidden">
+          <DialogDescription className="sr-only">
             Delete confirmation dialog
           </DialogDescription>
         </DialogHeader>
