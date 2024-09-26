@@ -2,6 +2,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Home | Gym Progress Tracker",
+  description:
+    "Home page of Gym Progress Tracker. Track your gym workouts, set goals, and monitor your fitness progress with ease.",
+};
 
 export default function Home() {
   const { userId } = auth();
