@@ -11,6 +11,7 @@ import Loader from "@/components/Loader";
 import SearchBar from "@/components/SearchBar";
 import { motion } from "framer-motion";
 import GoBackButton from "@/components/GoBackButton";
+import ErrorAlert from "@/components/ErrorAlert";
 
 export default function GroupPage({ params }: { params: { id: string } }) {
   const { user, isLoaded } = useUser();
@@ -19,6 +20,7 @@ export default function GroupPage({ params }: { params: { id: string } }) {
   const [isLoading, setIsLoading] = useState(true);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   if (isLoaded && !user) {
     redirectToSignIn();
@@ -29,19 +31,24 @@ export default function GroupPage({ params }: { params: { id: string } }) {
       if (!isLoaded || !user) return;
       try {
         setIsLoading(true);
+        setFetchError(null);
         const groupResponse = await fetch(`/api/groups/${params.id}`);
         const exercisesResponse = await fetch(
           `/api/exercises?groupId=${params.id}`
         );
         if (!groupResponse.ok || !exercisesResponse.ok) {
-          throw new Error("Failed to fetch data");
+          throw new Error("Failed to fetch data. Please try again later.");
         }
         const groupData = await groupResponse.json();
         const exercisesData = await exercisesResponse.json();
         setGroup(groupData);
         setExercises(exercisesData);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        if (error instanceof Error) {
+          setFetchError(error.message);
+        } else {
+          setFetchError("An unexpected error occurred.");
+        }
       } finally {
         setIsLoading(false);
       }
@@ -84,6 +91,15 @@ export default function GroupPage({ params }: { params: { id: string } }) {
     return (
       <div className="flex flex-col items-center justify-center min-h-svh text-white">
         <BicepsFlexed className="animate-bounce h-10 w-10" />
+      </div>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <div className="flex items-center justify-center w-[80%] max-w-lg h-[90svh] m-auto">
+        <ErrorAlert alertDescription={fetchError} />;
+        <GoBackButton />
       </div>
     );
   }

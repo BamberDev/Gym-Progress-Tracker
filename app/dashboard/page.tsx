@@ -11,6 +11,7 @@ import GroupList from "@/components/GroupList";
 import Loader from "@/components/Loader";
 import SearchBar from "@/components/SearchBar";
 import GoBackButton from "@/components/GoBackButton";
+import ErrorAlert from "@/components/ErrorAlert";
 
 export default function Dashboard() {
   const { user, isLoaded } = useUser();
@@ -18,6 +19,7 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   if (isLoaded && !user) {
     redirectToSignIn();
@@ -28,14 +30,19 @@ export default function Dashboard() {
       if (!isLoaded || !user) return;
       try {
         setIsLoading(true);
+        setFetchError(null);
         const response = await fetch("/api/groups");
         if (!response.ok) {
-          throw new Error("Failed to fetch groups");
+          throw new Error("Failed to fetch groups. Please try again later.");
         }
         const data = await response.json();
         setGroups(data);
       } catch (error) {
-        console.error("Error fetching groups:", error);
+        if (error instanceof Error) {
+          setFetchError(error.message);
+        } else {
+          setFetchError("An unexpected error occurred.");
+        }
       } finally {
         setIsLoading(false);
       }
@@ -74,6 +81,15 @@ export default function Dashboard() {
     return (
       <div className="flex flex-col items-center justify-center min-h-svh text-white">
         <BicepsFlexed className="animate-bounce h-12 w-12" />
+      </div>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <div className="flex items-center justify-center w-[80%] max-w-lg h-[90svh] m-auto">
+        <ErrorAlert alertDescription={fetchError} />;
+        <GoBackButton />
       </div>
     );
   }
