@@ -2,9 +2,10 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Pencil } from "lucide-react";
+import { Pencil, TrendingUp } from "lucide-react";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import EditExerciseDialog from "./EditExerciseDialog";
+import ExerciseHistory from "./ExerciseHistory";
 import { useErrorTimeout } from "@/hooks/useErrorTimeout";
 import ErrorAlert from "./ErrorAlert";
 
@@ -16,6 +17,7 @@ export default function ExerciseCard({
 }: ExerciseCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const [checkedSets, setCheckedSets] = useState<boolean[]>(
     new Array(exercise.sets.length).fill(false)
   );
@@ -87,20 +89,30 @@ export default function ExerciseCard({
               </p>
             ))}
           </div>
-          <div className="flex justify-end gap-2 mt-4">
+          <div className="flex justify-between mt-4">
             <Button
               type="button"
               variant="secondary"
               size="icon"
-              onClick={() => setIsEditing(true)}
+              onClick={() => setShowHistory(true)}
             >
-              <Pencil className="h-5 w-5 text-black" />
+              <TrendingUp className="h-5 w-5 text-black" />
             </Button>
-            <DeleteConfirmationDialog
-              onDelete={handleDelete}
-              entityName="exercise"
-              isDeleting={isDeleting}
-            />
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="secondary"
+                size="icon"
+                onClick={() => setIsEditing(true)}
+              >
+                <Pencil className="h-5 w-5 text-black" />
+              </Button>
+              <DeleteConfirmationDialog
+                onDelete={handleDelete}
+                entityName="exercise"
+                isDeleting={isDeleting}
+              />
+            </div>
           </div>
           {fetchError && (
             <div className="mt-2">
@@ -115,6 +127,14 @@ export default function ExerciseCard({
         isOpen={isEditing}
         onClose={() => setIsEditing(false)}
       />
+      {exercise.history && exercise.history.length > 0 && (
+        <ExerciseHistory
+          history={exercise.history}
+          exerciseName={exercise.name}
+          isOpen={showHistory}
+          onClose={() => setShowHistory(false)}
+        />
+      )}
     </motion.div>
   );
 }
