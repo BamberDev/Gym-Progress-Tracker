@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -96,6 +97,9 @@ export default function EditExerciseDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Exercise</DialogTitle>
+          <DialogDescription className="hidden">
+            Edit exercise dialog
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 text-black">
           <Input

@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -89,6 +90,9 @@ export default function EditGroupDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Group</DialogTitle>
+          <DialogDescription className="hidden">
+            Edit group dialog
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 text-black">
           <Input

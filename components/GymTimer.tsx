@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -106,6 +107,7 @@ export function GymTimer() {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Timer</DialogTitle>
+          <DialogDescription className="hidden">Timer dialog</DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4 py-4">
           <div>

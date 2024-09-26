@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -31,6 +32,9 @@ export default function DeleteConfirmationDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Are you sure?</DialogTitle>
+          <DialogDescription className="hidden">
+            Delete confirmation dialog
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <p className="text-center">

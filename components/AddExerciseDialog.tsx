@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -100,6 +101,9 @@ export default function AddExerciseDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add New Exercise</DialogTitle>
+          <DialogDescription className="hidden">
+            Add exercise dialog
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 text-black">
           <Input
