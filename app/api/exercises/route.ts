@@ -45,6 +45,25 @@ export async function POST(request: Request) {
     exercise.userId = userId;
     exercise.userName = `${user?.firstName} ${user?.lastName}`;
 
+    const averageWeight =
+      exercise.sets.reduce(
+        (sum: number, set: { weight: number }) => sum + set.weight,
+        0
+      ) / exercise.sets.length;
+    const averageReps =
+      exercise.sets.reduce(
+        (sum: number, set: { reps: number }) => sum + set.reps,
+        0
+      ) / exercise.sets.length;
+
+    exercise.history = [
+      {
+        date: new Date().toISOString(),
+        averageWeight: averageWeight,
+        averageReps: averageReps,
+      },
+    ];
+
     const validation = serverExerciseSchema.safeParse(exercise);
 
     if (!validation.success) {
