@@ -137,7 +137,10 @@ export default function EditExerciseDialog({
               className="w-full"
             >
               {isUpdating ? (
-                <Loader2 className="mr-1 h-5 w-5 animate-spin" />
+                <>
+                  <Loader2 className="mr-1 h-5 w-5 animate-spin" />
+                  Updating...
+                </>
               ) : (
                 "Update"
               )}
