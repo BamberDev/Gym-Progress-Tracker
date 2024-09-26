@@ -90,7 +90,7 @@ export default function EditGroupDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Group</DialogTitle>
-          <DialogDescription className="hidden">
+          <DialogDescription className="sr-only">
             Edit group dialog
           </DialogDescription>
         </DialogHeader>

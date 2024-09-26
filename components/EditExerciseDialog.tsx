@@ -97,7 +97,7 @@ export default function EditExerciseDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Exercise</DialogTitle>
-          <DialogDescription className="hidden">
+          <DialogDescription className="sr-only">
             Edit exercise dialog
           </DialogDescription>
         </DialogHeader>

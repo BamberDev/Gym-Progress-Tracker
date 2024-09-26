@@ -97,7 +97,7 @@ export default function AddGroupDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add New Group</DialogTitle>
-          <DialogDescription className="hidden">
+          <DialogDescription className="sr-only">
             Add group dialog
           </DialogDescription>
         </DialogHeader>

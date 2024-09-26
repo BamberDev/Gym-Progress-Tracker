@@ -107,7 +107,9 @@ export function GymTimer() {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Timer</DialogTitle>
-          <DialogDescription className="hidden">Timer dialog</DialogDescription>
+          <DialogDescription className="sr-only">
+            Timer dialog
+          </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4 py-4">
           <div>
