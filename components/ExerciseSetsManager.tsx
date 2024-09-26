@@ -79,7 +79,7 @@ export default function ExerciseSetsManager({
       {sets.map((set, index) => (
         <div
           key={index}
-          className="flex items-center justify-between space-x-2"
+          className="flex items-center justify-between space-x-2 pb-2"
         >
           {editingIndex === index ? (
             <>
@@ -137,7 +137,7 @@ export default function ExerciseSetsManager({
         </div>
       ))}
       {sets.length < 6 && isEditable && (
-        <div className="flex space-x-2 pt-2">
+        <div className="flex space-x-2">
           <Input
             name="reps"
             type="number"
