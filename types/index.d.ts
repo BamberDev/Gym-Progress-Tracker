@@ -12,6 +12,20 @@ type Exercise = {
   name: string;
   restTime: number | null;
   sets: ExerciseSet[];
+  history?: HistoryEntry[];
+};
+
+type HistoryEntry = {
+  date: string;
+  averageWeight: number;
+  averageReps: number;
+};
+
+type ExerciseHistoryProps = {
+  history: HistoryEntry[];
+  exerciseName: string;
+  isOpen: boolean;
+  onClose: () => void;
 };
 
 type NewExercise = {

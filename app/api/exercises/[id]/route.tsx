@@ -19,6 +19,35 @@ export async function PUT(
     const exercise = await request.json();
     const { id } = params;
 
+    const averageWeight =
+      exercise.sets.reduce(
+        (sum: number, set: { weight: number }) => sum + set.weight,
+        0
+      ) / exercise.sets.length;
+    const averageReps =
+      exercise.sets.reduce(
+        (sum: number, set: { reps: number }) => sum + set.reps,
+        0
+      ) / exercise.sets.length;
+
+    if (!exercise.history) {
+      exercise.history = [];
+    }
+
+    const lastEntry = exercise.history[exercise.history.length - 1];
+
+    if (
+      !lastEntry ||
+      lastEntry.averageWeight !== averageWeight ||
+      lastEntry.averageReps !== averageReps
+    ) {
+      exercise.history.push({
+        date: new Date().toISOString(),
+        averageWeight: averageWeight,
+        averageReps: averageReps,
+      });
+    }
+
     const validation = serverExerciseSchema.safeParse(exercise);
 
     if (!validation.success) {

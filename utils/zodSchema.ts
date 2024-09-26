@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+const historyEntrySchema = z.object({
+  date: z.string(),
+  averageWeight: z.number(),
+  averageReps: z.number(),
+});
+
 export const exerciseSetSchema = z.object({
   reps: z
     .number()
@@ -24,6 +30,7 @@ export const clientExerciseSchema = z.object({
     .max(30, "Rest time must not exceed 30 minutes")
     .nullable(),
   sets: z.array(exerciseSetSchema).min(1, "Please add at least one set"),
+  history: z.array(historyEntrySchema).optional(),
 });
 
 export const serverExerciseSchema = clientExerciseSchema.extend({
