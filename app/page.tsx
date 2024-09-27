@@ -24,12 +24,12 @@ export default function Home() {
           priority
         />
       </div>
-      <div className="flex flex-col items-center justify-center text-center mx-4 py-16 sm:mx-0 text-white relative z-10 bg-[#1f1f23] rounded-2xl border border-[#26252a]">
+      <div className="flex flex-col items-center justify-center text-center mx-4 py-16 sm:mx-0 text-white z-10 bg-[#1f1f23] rounded-2xl border border-[#26252a]">
         <Image
-          src="/Gym-Logo.png"
+          src="/Gym-Logo.webp"
           alt="Gym-Progress-Logo"
           width={200}
-          height={200}
+          height={173}
           className="shadow-2xl shadow-black rounded-full"
           priority
         />
@@ -55,7 +55,7 @@ export default function Home() {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <p>Coded by Kevin | &copy; {new Date().getFullYear()}</p>
+        <p>Gym Progress Tracker | &copy; {new Date().getFullYear()}</p>
       </Link>
     </div>
   );
