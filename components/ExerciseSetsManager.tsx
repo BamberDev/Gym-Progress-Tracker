@@ -3,8 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Pencil, Check, Plus } from "lucide-react";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
-import { Alert, AlertDescription } from "./ui/alert";
 import { exerciseSetSchema } from "@/utils/zodSchema";
+import ErrorAlert from "./ErrorAlert";
 
 export default function ExerciseSetsManager({
   sets,
@@ -34,7 +34,7 @@ export default function ExerciseSetsManager({
     value: string
   ) => {
     setErrors("");
-    const parsedValue = value === "" ? 0 : Number(value);
+    const parsedValue = value === "" ? 0 : parseFloat(value);
     const updatedSet = { ...sets[index], [field]: parsedValue };
     const updatedSets = sets.map((set, i) => (i === index ? updatedSet : set));
     onSetsChange(updatedSets);
@@ -43,7 +43,7 @@ export default function ExerciseSetsManager({
   const handleNewSetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setErrors("");
     const { name, value } = e.target;
-    const parsedValue = value === "" ? 0 : parseInt(value);
+    const parsedValue = value === "" ? 0 : parseFloat(value);
     setCurrentSet((prev) => ({
       ...prev,
       [name]: parsedValue,
@@ -160,11 +160,9 @@ export default function ExerciseSetsManager({
       )}
       {errors && (
         <div className="pt-2">
-          <Alert variant="destructive">
-            <AlertDescription>
-              <p className="whitespace-pre-wrap">{errors}</p>
-            </AlertDescription>
-          </Alert>
+          <ErrorAlert
+            alertDescription={<p className="whitespace-pre-wrap">{errors}</p>}
+          />
         </div>
       )}
     </div>
