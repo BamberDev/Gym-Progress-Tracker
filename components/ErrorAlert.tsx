@@ -1,9 +1,10 @@
+import { ReactNode } from "react";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
 export default function ErrorAlert({
   alertDescription,
 }: {
-  alertDescription: string | null;
+  alertDescription: ReactNode;
 }) {
   return (
     <Alert variant="destructive">
