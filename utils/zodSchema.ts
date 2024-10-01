@@ -14,6 +14,7 @@ export const exerciseSetSchema = z.object({
   weight: z
     .number()
     .min(0.5, "Weight must be at least 0.5")
+    .step(0.5, "Weight must be a multiple of 0.5")
     .max(500, "Weight must not exceed 500"),
 });
 
