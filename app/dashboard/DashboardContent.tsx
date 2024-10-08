@@ -27,9 +27,11 @@ export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchError, setFetchError] = useState<string | null>(null);
 
-  if (isLoaded && !user) {
-    redirectToSignIn();
-  }
+  useEffect(() => {
+    if (isLoaded && !user) {
+      redirectToSignIn();
+    }
+  }, [isLoaded, user]);
 
   useEffect(() => {
     const fetchGroups = async () => {
