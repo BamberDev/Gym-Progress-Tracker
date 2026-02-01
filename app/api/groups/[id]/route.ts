@@ -8,7 +8,7 @@ const client = new MongoClient(uri as string);
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
     const { userId } = auth();
@@ -16,7 +16,7 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id } = params;
+    const { id } = await context.params;
 
     await client.connect();
     const database = client.db("gym-progress");
@@ -33,7 +33,7 @@ export async function GET(
     console.error("Error fetching group:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   } finally {
     await client.close();
@@ -42,7 +42,7 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
     const { userId } = auth();
@@ -51,14 +51,14 @@ export async function PUT(
     }
 
     const group = await request.json();
-    const { id } = params;
+    const { id } = await context.params;
 
     const validation = serverGroupSchema.safeParse(group);
 
     if (!validation.success) {
       return NextResponse.json(
         { error: "Invalid group data", issues: validation.error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -71,7 +71,7 @@ export async function PUT(
 
     const result = await groups.updateOne(
       { _id: new ObjectId(id), userId },
-      { $set: updateFields }
+      { $set: updateFields },
     );
 
     if (result.matchedCount === 0) {
@@ -88,7 +88,7 @@ export async function PUT(
     console.error("Error updating group:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   } finally {
     await client.close();
@@ -97,7 +97,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
     const { userId } = auth();
@@ -105,7 +105,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id } = params;
+    const { id } = await context.params;
 
     await client.connect();
     const database = client.db("gym-progress");
@@ -127,7 +127,7 @@ export async function DELETE(
     console.error("Error deleting group:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   } finally {
     await client.close();

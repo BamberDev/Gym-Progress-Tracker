@@ -8,7 +8,7 @@ const client = new MongoClient(uri as string);
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
     const { userId } = auth();
@@ -17,22 +17,20 @@ export async function PUT(
     }
 
     const exercise = await request.json();
-    const { id } = params;
+    const { id } = await context.params;
 
     const averageWeight =
       exercise.sets.reduce(
         (sum: number, set: { weight: number }) => sum + set.weight,
-        0
+        0,
       ) / exercise.sets.length;
     const averageReps =
       exercise.sets.reduce(
         (sum: number, set: { reps: number }) => sum + set.reps,
-        0
+        0,
       ) / exercise.sets.length;
 
-    if (!exercise.history) {
-      exercise.history = [];
-    }
+    if (!exercise.history) exercise.history = [];
 
     const lastEntry = exercise.history[exercise.history.length - 1];
 
@@ -43,8 +41,8 @@ export async function PUT(
     ) {
       exercise.history.push({
         date: new Date().toISOString(),
-        averageWeight: averageWeight,
-        averageReps: averageReps,
+        averageWeight,
+        averageReps,
       });
     }
 
@@ -53,7 +51,7 @@ export async function PUT(
     if (!validation.success) {
       return NextResponse.json(
         { error: "Invalid exercise data", errors: validation.error.format() },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -66,13 +64,13 @@ export async function PUT(
 
     const result = await exercises.updateOne(
       { _id: new ObjectId(id), userId },
-      { $set: updateFields }
+      { $set: updateFields },
     );
 
     if (result.matchedCount === 0) {
       return NextResponse.json(
         { error: "Exercise not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -86,7 +84,7 @@ export async function PUT(
     console.error("Error updating exercise:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   } finally {
     await client.close();
@@ -95,7 +93,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
     const { userId } = auth();
@@ -103,7 +101,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id } = params;
+    const { id } = await context.params;
 
     await client.connect();
     const database = client.db("gym-progress");
@@ -114,7 +112,7 @@ export async function DELETE(
     if (result.deletedCount === 0) {
       return NextResponse.json(
         { error: "Exercise not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -123,7 +121,7 @@ export async function DELETE(
     console.error("Error deleting exercise:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   } finally {
     await client.close();
