@@ -6,6 +6,11 @@ export const metadata: Metadata = {
   description: "View and manage exercises for a specific workout group.",
 };
 
-export default function GroupPage({ params }: { params: { id: string } }) {
-  return <GroupContent params={params} />;
+export default async function GroupPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const resolvedParams = await params;
+  return <GroupContent params={resolvedParams} />;
 }
