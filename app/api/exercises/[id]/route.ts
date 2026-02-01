@@ -8,7 +8,7 @@ const client = new MongoClient(uri as string);
 
 export async function PUT(
   request: Request,
-  { params }: { params: Record<string, string> },
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
     const { userId } = auth();
@@ -17,7 +17,7 @@ export async function PUT(
     }
 
     const exercise = await request.json();
-    const { id } = params;
+    const { id } = await context.params;
 
     const averageWeight =
       exercise.sets.reduce(
@@ -30,9 +30,7 @@ export async function PUT(
         0,
       ) / exercise.sets.length;
 
-    if (!exercise.history) {
-      exercise.history = [];
-    }
+    if (!exercise.history) exercise.history = [];
 
     const lastEntry = exercise.history[exercise.history.length - 1];
 
@@ -43,8 +41,8 @@ export async function PUT(
     ) {
       exercise.history.push({
         date: new Date().toISOString(),
-        averageWeight: averageWeight,
-        averageReps: averageReps,
+        averageWeight,
+        averageReps,
       });
     }
 
@@ -95,7 +93,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: Record<string, string> },
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
     const { userId } = auth();
@@ -103,7 +101,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id } = params;
+    const { id } = await context.params;
 
     await client.connect();
     const database = client.db("gym-progress");
